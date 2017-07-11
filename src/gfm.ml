@@ -8,12 +8,12 @@ exception Err of string
 
 let rec start_list () (s:string) : res =
     if String.length s = 0
-    then Ok (s, EOF)
+    then Ok (s, `EOF)
     else Error ("not match EOF")
 
 let rec block () (s:string) : res =
     if String.length s = 0
-    then Ok (s, EOF)
+    then Ok (s, `EOF)
     else Error ("not match EOF")
 
 let rec doc : mf =
