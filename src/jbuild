@@ -1,15 +1,19 @@
 (jbuild_version 1)
 
-(executable
-  ((name gfm)
-   ; (libraries ())
-   ; (preprocess (pps ()))
-   )
-  )
-
-; (library
- ; ((name ppx_let)
-  ; (public_name ppx_let)
-  ; (kind ppx_rewriter)
-  ; (libraries (ppx_core ppx_driver))
-  ; (preprocess no_preprocessing)))
+(executable (
+  (name gfm)
+  (flags (
+    "-w" "@a-4"
+    "-keep-locs"
+    "-safe-string"
+    "-short-paths"
+    "-strict-formats"
+    "-strict-sequence"
+  ))
+  ; (libraries (
+    ; lwt
+  ; ))
+  ; (preprocess (
+    ; pps (lwt.ppx)
+  ; ))
+))

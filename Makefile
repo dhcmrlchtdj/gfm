@@ -1,5 +1,5 @@
-default:
-	jbuilder build src/gfm.exe
+all:
+	jbuilder build src/gfm.{exe,bc}
 
 clean:
-	rm -rfv _build
+	jbuilder clean
