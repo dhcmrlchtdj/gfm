@@ -1,3 +1,4 @@
 S src/**
 B _build/**
+PKG lwt, ppx_deriving.std, yojson
 FLG -w +a-4 -warn-error -a+31 -keep-locs -safe-string -short-paths -strict-formats -strict-sequence
