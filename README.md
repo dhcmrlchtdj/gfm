@@ -1,14 +1,9 @@
-http://www.vfmd.org/
+# vanilla-flavoured markdown
+
+[vfmd](http://www.vfmd.org/) parser in [OCaml](http://ocaml.org/)
 
 ---
 
-> Parsing has two phases:
-> In the first phase, construct the block structure of the document
-> In the second phase, parse the contents of paragraphs into markdown elements
-
----
-
-- One or more open blocks may be closed.
-- One or more new blocks may be created as children of the last open block.
-- Text may be added to the last (deepest) open block remaining on the tree.
-
+## vfmd implements
+- [C++](https://github.com/vfmd/vfmd-src)
+- [Go](https://github.com/akavel/vfmd)
