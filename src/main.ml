@@ -1,12 +1,20 @@
+open Batteries
+
+let render (src: string) : unit =
+    let s = src |> String.trim in
+    let md = Parser.parse s in
+    print_endline md ; ()
+
+
 let () =
-    let parse = fun (id,sec,md,html) ->
-        let r = Parser.parse md in
-        (id,sec,md,html,r,r=html)
+    let prog = Sys.argv.(0) in
+    let usage () = Printf.printf "Usage: %s [file | -]\n" prog in
+    let argv = Sys.argv |> Array.to_list |> List.tl in
+    let aux = function
+        | ["-h"] | ["--help"] -> usage ()
+        | ["-"] -> IO.read_all IO.stdin |> render
+        | [file] -> File.with_file_in file IO.read_all |> render
+        | [] | _ -> usage ()
     in
-    let print = fun (id,sec,md,html,r,_) ->
-        Printf.printf "%40s \t %d \t %B \t %S %S \n" sec id (r = html) html r
-    in
-    Spec.spec
-    |> List.map parse
-    |> List.filter (fun (_,_,_,_,_,pass) -> not pass)
-    |> List.iter print
+    aux argv
+

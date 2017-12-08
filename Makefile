@@ -1,17 +1,27 @@
 OCB_FLAGS := \
 	-tag 'color(always)' \
-	-tags safe_string,strict_sequence,strict_formats,short_paths,keep_locs \
-	-use-ocamlfind -pkgs 'unix,str,ppx_deriving.std,yojson' \
+	-tag safe_string \
+	-tag short_paths \
+	-tag strict_sequence \
+	-tag keep_locs \
+	-tag keep_docs \
+	-tag bin_annot \
+	-tag principal \
+	-tag nopervasives \
+	-tag thread \
+	-use-ocamlfind \
+	-pkg ppx_deriving.std \
+	-pkg batteries \
 	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 
 mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 
-test: main
-	./main.byte
-
 main: $(mlis)
 	@$(OCB) src/main.byte
+
+test: main
+	@echo "# header" | ./main.byte -
 
 $(mlis):
 	@$(OCB) $@.inferred.mli
@@ -19,4 +29,4 @@ $(mlis):
 clean:
 	@ocamlbuild -clean
 
-.PHONY: test main clean $(mlis)
+.PHONY: main clean $(mlis)
