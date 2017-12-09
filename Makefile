@@ -25,8 +25,7 @@ test: main
 		./run_tests \
 		--dir './tests/block_level/atx_header/' \
 		--actual-fails --expected-fails \
-		../main.byte
-	# cd ./vfmd-test && ./run_tests --actual-fails --expected-fails ../main.byte
+		'../main.byte -'
 
 $(mlis):
 	@$(OCB) $@.inferred.mli
