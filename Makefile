@@ -21,7 +21,12 @@ main: $(mlis)
 	@$(OCB) src/main.byte
 
 test: main
-	@echo "# header" | ./main.byte -
+	cd ./vfmd-test && \
+		./run_tests \
+		--dir './tests/block_level/atx_header/' \
+		--actual-fails --expected-fails \
+		../main.byte
+	# cd ./vfmd-test && ./run_tests --actual-fails --expected-fails ../main.byte
 
 $(mlis):
 	@$(OCB) $@.inferred.mli
