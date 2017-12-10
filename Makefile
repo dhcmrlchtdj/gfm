@@ -8,7 +8,6 @@ OCB_FLAGS := \
 	-tag bin_annot \
 	-tag principal \
 	-tag nopervasives \
-	-tag thread \
 	-use-ocamlfind \
 	-pkg ppx_deriving.std \
 	-pkg batteries \
@@ -19,6 +18,9 @@ mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 
 main: $(mlis)
 	@$(OCB) src/main.byte
+
+jsoo: main
+	js_of_ocaml --opt=3 --pretty +nat.js +weak.js ./main.byte
 
 test: main
 	cd ./vfmd-test && \
@@ -33,4 +35,4 @@ $(mlis):
 clean:
 	@ocamlbuild -clean
 
-.PHONY: main clean $(mlis)
+.PHONY: main clean $(mlis) jsoo test
