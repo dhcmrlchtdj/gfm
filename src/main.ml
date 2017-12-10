@@ -3,7 +3,7 @@ open Batteries
 let render (src: string) : unit =
     let s = src |> String.trim in
     let md = Parser.parse s in
-    print_endline md ; ()
+    print_string md ; ()
 
 
 let () =
