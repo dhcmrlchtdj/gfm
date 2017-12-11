@@ -1,4 +1,5 @@
 open Batteries
+module Str = Humane_re.Str
 
 module U = struct
     module Utf8 = struct
@@ -117,7 +118,36 @@ module U = struct
 
 end
 
+module BlockElement = struct
+    type lines = U.Doc.line list
+    type t =
+        | AtxHeader
+        | SetexHeader
+        | CodeBlock
+        | BlockQuote
+        | HorizontalRule
+        | UnorderedList
+        | OrderList
+        | Paragraph
+        | ReferenceResolutionBlock
+        | NullBlock
+
+end
+
+module SpanElement = struct
+    type t =
+        | Span
+        | Link
+        | Emphasis
+        | CodeSpan
+        | Image
+        | AutomaticLink
+        | HTML
+
+end
+
 let parse (md: string) : string =
     let doc = U.src_to_doc md in
+    dump doc |> print_endline ;
     U.str_of_doc doc
 

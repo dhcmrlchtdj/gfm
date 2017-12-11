@@ -11,6 +11,7 @@ OCB_FLAGS := \
 	-use-ocamlfind \
 	-pkg ppx_deriving.std \
 	-pkg batteries \
+	-pkg humane_re \
 	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 

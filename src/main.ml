@@ -2,13 +2,12 @@ open Batteries
 
 let render (src: string) : unit =
     let s = src |> String.trim in
-    let md = Parser.parse s in
-    print_string md ; ()
+    let html = Parser.parse s in
+    print_string html ; ()
 
 
 let () =
-    let prog = Sys.argv.(0) in
-    let usage () = Printf.printf "Usage: %s [file | -]\n" prog in
+    let usage () = Printf.printf "Usage: %s [file | -]\n" exe in
     let argv = Sys.argv |> Array.to_list |> List.tl in
     let aux = function
         | ["-h"] | ["--help"] -> usage ()
