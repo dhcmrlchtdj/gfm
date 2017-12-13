@@ -10,6 +10,6 @@ FLG -bin-annot
 FLG -thread
 FLG -nopervasives
 FLG -w +a-4
-PKG ppx_deriving.std
 PKG batteries
-PKG humane_re
+PKG re
+PKG re.perl

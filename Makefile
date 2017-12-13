@@ -9,9 +9,9 @@ OCB_FLAGS := \
 	-tag principal \
 	-tag nopervasives \
 	-use-ocamlfind \
-	-pkg ppx_deriving.std \
 	-pkg batteries \
-	-pkg humane_re \
+	-pkg re \
+	-pkg re.perl \
 	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 
