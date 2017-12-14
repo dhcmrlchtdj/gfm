@@ -1,17 +1,6 @@
 open Batteries
 open R.Infix
-
-type block =
-    | AtxHeader of UTF8.t
-    | SetexHeader of UTF8.t * UTF8.t
-    | CodeBlock of UTF8.t list
-    | BlockQuote of UTF8.t list
-    | HorizontalRule
-    | UnorderedList of UTF8.t list
-    | OrderedList of UTF8.t list
-    | Paragraph of UTF8.t list
-    | ReferenceResolutionBlock of UTF8.t list
-    | NullBlock
+open Block_type
 
 let re_ref =
     R.compile
@@ -34,7 +23,7 @@ let re_order = R.compile "^( *[0-9]+\\. +)[^ ]"
 
 let re_header = R.compile "^(-+|=+) *$"
 
-let begin_with_four_space = String.starts_with "    "
+let begin_with_four_space (s: string) : bool = String.starts_with s "    "
 
 let first_non_space (s: string) : char option =
     s |> String.enum |> Enum.drop_while (fun x -> x = ' ') |> Enum.get
@@ -76,7 +65,7 @@ let rec advance_unordered_list (starter: string) (starter_len: int)
         when not (String.starts_with a starter) && include_non_space starter_len a ->
         ("" :: acc, t)
     | a :: (b :: _ as t)
-        when a <> "" && not (String.starts_with starter b)
+        when a <> "" && not (String.starts_with b starter)
              && include_non_space starter_len b && not (begin_with_four_space b)
              && (re_unorder =~ b || re_order =~ b || re_horizontal =~ b) ->
         (a :: acc, t)
@@ -121,11 +110,11 @@ let split_to_block (input: UTF8.t list) =
         | h1 :: h2 :: t when re_header =~ h2 ->
             let block = SetexHeader (h1, h2) in
             aux (block :: acc) t
-        | h :: t when String.starts_with "    " h ->
+        | h :: t when begin_with_four_space h ->
             let b, tt = advance_code_block [] (h :: t) in
             let block = CodeBlock (List.rev b) in
             aux (block :: acc) tt
-        | h :: t when String.starts_with "#" h ->
+        | h :: t when String.starts_with h "#" ->
             let block = AtxHeader h in
             aux (block :: acc) t
         | h :: t when first_non_space h = Some '>' ->
@@ -155,9 +144,9 @@ let split_to_block (input: UTF8.t list) =
                         let block = OrderedList (List.rev b) in
                         aux (block :: acc) tt
                     | _ -> failwith "never" )
-        | _ :: t ->
+        | h :: t ->
             (* TODO *)
-            let block = Paragraph [] in
+            let block = Paragraph [h] in
             aux (block :: acc) t
     in
     aux [] input

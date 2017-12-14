@@ -33,7 +33,7 @@ let split_to_line (input: UTF8.t) : UTF8.t list =
 
 
 let parse (input: string) : string =
-    let x = input |> normalize |> split_to_line |> Parse_block.split_to_block in
+    let x = input |> normalize |> split_to_line |> Block_parser.split_to_block in
     dump x
 
 
