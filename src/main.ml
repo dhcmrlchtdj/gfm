@@ -1,7 +1,7 @@
 open Batteries
 
 let render (src: string) : unit =
-    let s = src |> String.trim in
+    let s = src |> String.rchop ~n:1 in
     let html = Parser.parse s in
     print_string html ; ()
 

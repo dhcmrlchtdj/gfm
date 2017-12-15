@@ -7,6 +7,18 @@ let re_header_text = R.compile "^(#+)(.*[^#])#*$"
 
 let re_header_empty = R.compile "^(#+)$"
 
+let html_encode (s: string) : string =
+    let f = function
+        | '<' -> "&lt;"
+        | '>' -> "&gt;"
+        | '&' -> "&amp;"
+        | '"' -> "&quot;"
+        | '\'' -> "&#x27;"
+        | c -> Char.escaped c
+    in
+    s |> String.to_list |> List.map f |> String.join ""
+
+
 let interp_block refs = function
     | ReferenceResolutionBlock _ -> []
     | NullBlock -> ["\n"]
@@ -38,16 +50,37 @@ let interp_block refs = function
         let open_tag = "<pre><code>" in
         let close_tag = "</code></pre>\n" in
         let f line acc =
-            let t = String.lchop ~n:4 line in
+            let t = line |> String.lchop ~n:4 |> html_encode in
             t :: "\n" :: acc
         in
         let l = List.fold_right f lines [close_tag] in
         open_tag :: l
     | BlockQuote _ -> ["TODO"]
     | HorizontalRule -> ["<hr/>\n"]
-    | UnorderedList _ -> ["TODO"]
-    | OrderedList _ -> ["TODO"]
-    | Paragraph p -> ["<p>"; p; "</p>\n"]
+    | UnorderedList lines ->
+        let open_tag = "<ul>\n" in
+        let close_tag = "</ul>\n" in
+        let f line acc =
+            (* TODO *)
+            let t = P.sprintf "<li>%s</li>\n" line in
+            t :: acc
+        in
+        let l = List.fold_right f lines [close_tag] in
+        open_tag :: l
+    | OrderedList lines ->
+        let open_tag = "<ol>\n" in
+        let close_tag = "</ol>\n" in
+        let f line acc =
+            (* TODO *)
+            let t = P.sprintf "<li>%s</li>\n" line in
+            t :: acc
+        in
+        let l = List.fold_right f lines [close_tag] in
+        open_tag :: l
+    | Paragraph line ->
+        (* TODO *)
+        let p = line in
+        ["<p>"; p; "</p>\n"]
 
 
 let interp blocks =

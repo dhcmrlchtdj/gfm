@@ -43,6 +43,7 @@ let rec advance_code_block (acc: UTF8.t list) = function
     | a :: (b :: _ as t) when b <> "" && not (begin_with_four_space b) ->
         (a :: acc, t)
     | a :: ("" :: b :: _ as t) when not (begin_with_four_space b) -> (a :: acc, t)
+    | [a; ""] -> (a :: acc, [])
     | h :: t -> advance_code_block (h :: acc) t
 
 
