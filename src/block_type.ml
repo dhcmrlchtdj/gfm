@@ -9,5 +9,5 @@ type block =
     | HorizontalRule
     | UnorderedList of UTF8.t list
     | OrderedList of UTF8.t list
-    | Paragraph of UTF8.t list
+    | Paragraph of UTF8.t
     | ReferenceResolutionBlock of UTF8.t list

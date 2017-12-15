@@ -24,11 +24,12 @@ jsoo: main
 	js_of_ocaml --opt=3 --pretty +nat.js +weak.js ./main.byte
 
 test: main
-	cd ./vfmd-test && \
-		./run_tests \
-		--dir './tests/block_level/atx_header/' \
-		--actual-fails --expected-fails \
-		'../main.byte -'
+	# cd ./vfmd-test && \
+		# ./run_tests \
+		# --dir './tests/block_level/atx_header/' \
+		# --actual-fails --expected-fails \
+		# '../main.byte -'
+	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.byte -
 
 $(mlis):
 	@$(OCB) $@.inferred.mli

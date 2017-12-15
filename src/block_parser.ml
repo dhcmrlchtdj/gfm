@@ -86,7 +86,7 @@ let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
     | h :: t -> advance_ordered_list starter_len (h :: acc) t
 
 
-let split_to_block (input: UTF8.t list) =
+let split (input: UTF8.t list) =
     let rec aux acc = function
         | [] -> List.rev acc
         | "" :: t ->
@@ -146,7 +146,7 @@ let split_to_block (input: UTF8.t list) =
                     | _ -> failwith "never" )
         | h :: t ->
             (* TODO *)
-            let block = Paragraph [h] in
+            let block = Paragraph h in
             aux (block :: acc) t
     in
     aux [] input

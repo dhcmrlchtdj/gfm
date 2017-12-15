@@ -47,7 +47,7 @@ let interp_block refs = function
     | HorizontalRule -> ["<hr/>\n"]
     | UnorderedList _ -> ["TODO"]
     | OrderedList _ -> ["TODO"]
-    | Paragraph _ -> ["TODO"]
+    | Paragraph p -> ["<p>"; p; "</p>\n"]
 
 
 let interp blocks =

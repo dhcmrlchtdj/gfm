@@ -33,8 +33,8 @@ let split_to_line (input: UTF8.t) : UTF8.t list =
 
 
 let parse (input: string) : string =
-    let x = input |> normalize |> split_to_line |> Block_parser.split_to_block in
-    dump x
+    input |> normalize |> split_to_line |> Block_parser.split
+    |> Block_interp.interp
 
 
 (* let doc = U.src_to_doc md in *)
