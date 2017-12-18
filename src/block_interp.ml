@@ -28,7 +28,7 @@ let interp_block refs = function
                     let len = Int.min 6 (String.length x) in
                     let open_tag = P.sprintf "<h%d>" len in
                     let close_tag = P.sprintf "</h%d>\n" len in
-                    let title = String.trim y in
+                    let title = y |> String.trim in
                     (* TODO *)
                     [open_tag; title; close_tag]
                 | _ ->
@@ -41,7 +41,7 @@ let interp_block refs = function
                         | _ -> failwith "never" )
     | SetexHeader (h, l) -> (
             (* TODO *)
-            let title = String.trim h in
+            let title = h |> String.trim in
             match l.[0] with
                 | '=' -> ["<h1>"; title; "</h1>\n"]
                 | '-' -> ["<h2>"; title; "</h2>\n"]
@@ -62,7 +62,7 @@ let interp_block refs = function
         let close_tag = "</ul>\n" in
         let f line acc =
             (* TODO *)
-            let t = P.sprintf "<li>%s</li>\n" line in
+            let t = line |> P.sprintf "<li>%s</li>\n" in
             t :: acc
         in
         let l = List.fold_right f lines [close_tag] in
@@ -72,7 +72,7 @@ let interp_block refs = function
         let close_tag = "</ol>\n" in
         let f line acc =
             (* TODO *)
-            let t = P.sprintf "<li>%s</li>\n" line in
+            let t = line |> P.sprintf "<li>%s</li>\n" in
             t :: acc
         in
         let l = List.fold_right f lines [close_tag] in
