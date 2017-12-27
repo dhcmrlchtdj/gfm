@@ -7,7 +7,7 @@ type block =
     | CodeBlock of UTF8.t list
     | BlockQuote of UTF8.t list
     | HorizontalRule
-    | UnorderedList of UTF8.t list
-    | OrderedList of UTF8.t list
+    | UnorderedList of UTF8.t list * int
+    | OrderedList of UTF8.t list * int
     | Paragraph of UTF8.t
     | ReferenceResolutionBlock of UTF8.t list

@@ -133,7 +133,7 @@ let split (input: UTF8.t list) =
                         let b, tt =
                             advance_unordered_list starter starter_len [] (h :: t)
                         in
-                        let block = UnorderedList (List.rev b) in
+                        let block = UnorderedList (List.rev b, starter_len) in
                         aux (block :: acc) tt
                     | _ -> failwith "never" )
         | h :: t when re_order =~ h -> (
@@ -142,7 +142,7 @@ let split (input: UTF8.t list) =
                     | Some [|_; starter|] ->
                         let starter_len = String.length starter in
                         let b, tt = advance_ordered_list starter_len [] (h :: t) in
-                        let block = OrderedList (List.rev b) in
+                        let block = OrderedList (List.rev b, starter_len) in
                         aux (block :: acc) tt
                     | _ -> failwith "never" )
         | h :: t ->

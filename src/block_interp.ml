@@ -7,6 +7,8 @@ let re_header_text = R.compile "^(#+)(.*[^#])#*$"
 
 let re_header_empty = R.compile "^(#+)$"
 
+let re_space = R.compile "^( *)"
+
 let html_encode (s: string) : string =
     let f = function
         | '<' -> "&lt;"
@@ -17,6 +19,36 @@ let html_encode (s: string) : string =
         | c -> Char.escaped c
     in
     s |> String.to_list |> List.map f |> String.join ""
+
+
+let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
+    let m = R.exec re_space line in
+    match m with
+        | Some [|_; sp|] ->
+            let len = String.length sp in
+            let l = Int.min len starter_len in
+            String.lchop ~n:l line
+        | _ -> line
+
+
+let unordered_list_item_process (lines: UTF8.t list) (starter_len: int)
+    : UTF8.t list =
+    let lchop = lchop_space_at_most starter_len in
+    match lines with
+        | [] -> []
+        | h :: t ->
+            let hh = String.lchop ~n:starter_len h in
+            hh :: (t |> List.map lchop)
+
+
+let ordered_list_item_process (lines: UTF8.t list) (starter_len: int)
+    : UTF8.t list =
+    let lchop = lchop_space_at_most starter_len in
+    match lines with
+        | [] -> []
+        | h :: t ->
+            let hh = String.lchop ~n:starter_len h in
+            hh :: (t |> List.map lchop)
 
 
 let interp_block refs = function
@@ -57,7 +89,7 @@ let interp_block refs = function
         open_tag :: l
     | BlockQuote _ -> ["TODO"]
     | HorizontalRule -> ["<hr/>\n"]
-    | UnorderedList lines ->
+    | UnorderedList (lines, starter_len) ->
         let open_tag = "<ul>\n" in
         let close_tag = "</ul>\n" in
         let f line acc =
@@ -67,7 +99,7 @@ let interp_block refs = function
         in
         let l = List.fold_right f lines [close_tag] in
         open_tag :: l
-    | OrderedList lines ->
+    | OrderedList (lines, starter_len) ->
         let open_tag = "<ol>\n" in
         let close_tag = "</ol>\n" in
         let f line acc =
