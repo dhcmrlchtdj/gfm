@@ -31,7 +31,7 @@ let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
         | _ -> line
 
 
-let unordered_list_item_process (lines: UTF8.t list) (starter_len: int)
+let unordered_list_item_process (starter_len: int) (lines: UTF8.t list)
     : UTF8.t list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
@@ -41,7 +41,7 @@ let unordered_list_item_process (lines: UTF8.t list) (starter_len: int)
             hh :: (t |> List.map lchop)
 
 
-let ordered_list_item_process (lines: UTF8.t list) (starter_len: int)
+let ordered_list_item_process (starter_len: int) (lines: UTF8.t list)
     : UTF8.t list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
@@ -97,7 +97,10 @@ let interp_block refs = function
             let t = line |> P.sprintf "<li>%s</li>\n" in
             t :: acc
         in
-        let l = List.fold_right f lines [close_tag] in
+        let l =
+            lines |> unordered_list_item_process starter_len
+            |> fun x -> List.fold_right f x [close_tag]
+        in
         open_tag :: l
     | OrderedList (lines, starter_len) ->
         let open_tag = "<ol>\n" in
@@ -107,7 +110,10 @@ let interp_block refs = function
             let t = line |> P.sprintf "<li>%s</li>\n" in
             t :: acc
         in
-        let l = List.fold_right f lines [close_tag] in
+        let l =
+            lines |> ordered_list_item_process starter_len
+            |> fun x -> List.fold_right f x [close_tag]
+        in
         open_tag :: l
     | Paragraph line ->
         (* TODO *)

@@ -35,7 +35,3 @@ let split_to_line (input: UTF8.t) : UTF8.t list =
 let parse (input: string) : string =
     input |> normalize |> split_to_line |> Block_parser.split
     |> Block_interp.interp
-
-
-(* let doc = U.src_to_doc md in *)
-(* U.str_of_doc doc *)
