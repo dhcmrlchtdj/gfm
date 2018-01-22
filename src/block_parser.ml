@@ -151,4 +151,3 @@ let split (input: UTF8.t list) =
             aux (block :: acc) t
     in
     aux [] input
-

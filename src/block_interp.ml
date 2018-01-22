@@ -128,4 +128,3 @@ let interp blocks =
     in
     let f = interp_block refs in
     blocks |> List.map f |> List.flatten |> String.join ""
-
