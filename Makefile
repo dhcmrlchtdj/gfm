@@ -11,7 +11,6 @@ OCB_FLAGS := \
 	-use-ocamlfind \
 	-pkg batteries \
 	-pkg re \
-	-pkg re.perl \
 	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 
@@ -19,9 +18,6 @@ mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 
 main: $(mlis)
 	@$(OCB) src/main.byte
-
-jsoo: main
-	js_of_ocaml --opt=3 --pretty +nat.js +weak.js ./main.byte
 
 test: main
 	# ./vfmd-test/run_tests --actual-fails --expected-fails --dir './vfmd-test/tests/**/*' './main.byte -'

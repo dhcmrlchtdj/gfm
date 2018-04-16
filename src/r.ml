@@ -1,7 +1,7 @@
 open Batteries
 
 let compile (pattern: string) : Re.re =
-    pattern |> Re_perl.re ~opts:[] |> Re.compile
+    pattern |> Re.Perl.re ~opts:[] |> Re.compile
 
 
 let test (re: Re.re) (str: string) : bool = Re.execp re str

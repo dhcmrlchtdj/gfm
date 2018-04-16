@@ -19,9 +19,7 @@ type x = Asterisk | Underscore | Link | RawHTML
 (* | Some '!' -> parse_image x *)
 (* | Some '<' -> parse_HTML x *)
 (* | Some _ -> "" *)
-
-let parse (input: UTF8.t) : UTF8.t = ""
-
+(* let parse (input: UTF8.t) : UTF8.t = "" *)
 (* let len = String.length input in *)
 (* let remain = String.enum input in *)
 (* parse_root remain *)

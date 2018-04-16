@@ -12,4 +12,3 @@ FLG -nopervasives
 FLG -w +a-4
 PKG batteries
 PKG re
-PKG re.perl
