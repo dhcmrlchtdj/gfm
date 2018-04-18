@@ -1,27 +1,27 @@
 open Batteries
-open R.Infix
+open Regexp.Infix
 open Block_type
 
 let re_ref =
-    R.compile
+    Regexp.compile
         "^ *\\[((((\\\\\\[)|(\\\\\\])|[^]])+)|(!\\[((\\\\\\[)|(\\\\\\])|[^]])+\\])|(!\\[((\\\\\\[)|(\\\\\\])|[^]])+\\]\\[((\\\\\\[)|(\\\\\\])|[^]])+\\]))\\] *: *([^ <>]+|<[^<>]*>)( .*)?$"
 
 
 let re_ref_end =
-    R.compile
+    Regexp.compile
         "^ +((\"([^\"\\\\]|\\\\.)*\")|('([^'\\\\]|\\\\.)*')|(\\(([^(\\\\]|\\\\.)*\\))) *$"
 
 
 let re_horizontal =
-    R.compile
+    Regexp.compile
         "^ *((\\* *\\* *\\* *[\\* ]*)|(\\- *\\- *\\- *[\\- ]*)|(_ *_ *_ *[_ ]*))$"
 
 
-let re_unorder = R.compile "^( *[-+*] +)[^ ]"
+let re_unorder = Regexp.compile "^( *[-+*] +)[^ ]"
 
-let re_order = R.compile "^( *[0-9]+\\. +)[^ ]"
+let re_order = Regexp.compile "^( *[0-9]+\\. +)[^ ]"
 
-let re_header = R.compile "^(-+|=+) *$"
+let re_header = Regexp.compile "^(-+|=+) *$"
 
 let begin_with_four_space (s: string) : bool = String.starts_with s "    "
 
@@ -94,7 +94,7 @@ let split (input: UTF8.t list) =
             let block = NullBlock in
             aux (block :: acc) t
         | h :: t when not (begin_with_four_space h) && re_ref =~ h -> (
-                let m = R.exec re_ref h in
+                let m = Regexp.exec re_ref h in
                 match m with
                     | Some mm ->
                         let trailing_seq = mm.(18) in
@@ -126,7 +126,7 @@ let split (input: UTF8.t list) =
             let block = HorizontalRule in
             aux (block :: acc) t
         | h :: t when re_unorder =~ h -> (
-                let m = R.exec re_unorder h in
+                let m = Regexp.exec re_unorder h in
                 match m with
                     | Some [|_; starter|] ->
                         let starter_len = String.length starter in
@@ -137,7 +137,7 @@ let split (input: UTF8.t list) =
                         aux (block :: acc) tt
                     | _ -> failwith "never" )
         | h :: t when re_order =~ h -> (
-                let m = R.exec re_order h in
+                let m = Regexp.exec re_order h in
                 match m with
                     | Some [|_; starter|] ->
                         let starter_len = String.length starter in

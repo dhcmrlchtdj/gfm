@@ -32,6 +32,6 @@ let split_to_line (input: UTF8.t) : UTF8.t list =
     input |> String.split_on_char '\n' |> List.map expand_tab
 
 
-let parse (input: string) : string =
-    input |> normalize |> split_to_line |> Block_parser.split
-    |> Block_interp.interp
+let parse (input: string) : Ast.md_ast =
+    input |> normalize |> split_to_line |> Block_parser.split |> ignore;
+    [Ast.Bhorizontal]

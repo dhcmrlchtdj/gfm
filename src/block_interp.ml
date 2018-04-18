@@ -1,13 +1,13 @@
 open Batteries
-open R.Infix
+open Regexp.Infix
 open Block_type
 module P = Printf
 
-let re_header_text = R.compile "^(#+)(.*[^#])#*$"
+let re_header_text = Regexp.compile "^(#+)(.*[^#])#*$"
 
-let re_header_empty = R.compile "^(#+)$"
+let re_header_empty = Regexp.compile "^(#+)$"
 
-let re_space = R.compile "^( *)"
+let re_space = Regexp.compile "^( *)"
 
 let html_encode (s: string) : string =
     let f = function
@@ -22,7 +22,7 @@ let html_encode (s: string) : string =
 
 
 let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
-    let m = R.exec re_space line in
+    let m = Regexp.exec re_space line in
     match m with
         | Some [|_; sp|] ->
             let len = String.length sp in
@@ -55,7 +55,7 @@ let interp_block refs = function
     | ReferenceResolutionBlock _ -> []
     | NullBlock -> ["\n"]
     | AtxHeader h -> (
-            match R.exec re_header_text h with
+            match Regexp.exec re_header_text h with
                 | Some [|_; x; y|] ->
                     let len = Int.min 6 (String.length x) in
                     let open_tag = P.sprintf "<h%d>" len in
@@ -64,7 +64,7 @@ let interp_block refs = function
                     (* TODO *)
                     [open_tag; title; close_tag]
                 | _ ->
-                    match R.exec re_header_empty h with
+                    match Regexp.exec re_header_empty h with
                         | Some [|_; x|] ->
                             let len = Int.min 6 (String.length x) in
                             let open_tag = P.sprintf "<h%d>" len in
