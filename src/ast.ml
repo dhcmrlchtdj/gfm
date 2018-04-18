@@ -10,17 +10,13 @@ type inlineElement =
     | Icode of UTF8.t
     | Itext of UTF8.t
 
-and inlineElements = inlineElement list
-
 and blockElement =
-    | Bheading of int * inlineElements
-    | Bparagraph of inlineElements
+    | Bheading of int * inlineElement list
+    | Bparagraph of inlineElement list
     | Bhorizontal
     | Bcode of UTF8.t
-    | Bblockquote of blockElements
-    | BorderedList of blockElements
-    | BunorderedList of blockElements
+    | Bblockquote of blockElement list
+    | BorderedList of blockElement list
+    | BunorderedList of blockElement list
 
-and blockElements = blockElement list
-
-type md_ast = blockElements
+type md_ast = blockElement list
