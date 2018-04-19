@@ -1,6 +1,7 @@
 open Batteries
 open Regexp.Infix
-open Block_type
+open TypeSimpleBlock
+open TypeAst
 module P = Printf
 
 let re_header_text = Regexp.compile "^(#+)(.*[^#])#*$"
@@ -123,3 +124,5 @@ let interp blocks =
     in
     let f = interp_block refs in
     blocks |> List.map f |> List.flatten |> String.join ""
+
+let simple_block_to_block (block: simpleBlock list) : md_ast = [Bhorizontal]

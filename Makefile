@@ -25,7 +25,7 @@ test: main
 	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.byte -
 
 $(mlis):
-	@$(OCB) $@.inferred.mli
+	-@$(OCB) $@.inferred.mli
 
 clean:
 	@ocamlbuild -clean

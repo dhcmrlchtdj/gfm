@@ -1,6 +1,6 @@
 open Batteries
 
-type block =
+type simpleBlock =
     | NullBlock
     | AtxHeader of UTF8.t
     | SetexHeader of UTF8.t * UTF8.t

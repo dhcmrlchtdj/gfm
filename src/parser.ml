@@ -27,6 +27,6 @@ let normalize (input: string) : UTF8.t =
 let split_to_line (input: UTF8.t) : UTF8.t list =
     input |> String.split_on_char '\n' |> List.map expand_tab
 
-let parse (input: string) : Ast.md_ast =
-    input |> normalize |> split_to_line |> Block_parser.split |> ignore ;
-    [Ast.Bhorizontal]
+let parse (input: string) : TypeAst.md_ast =
+    input |> normalize |> split_to_line |> ParseSimpleBlock.line_to_simple_block
+    |> ParseBlock.simple_block_to_block

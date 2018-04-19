@@ -1,6 +1,6 @@
 open Batteries
 open Regexp.Infix
-open Block_type
+open TypeSimpleBlock
 
 let re_ref =
     Regexp.compile
@@ -77,7 +77,7 @@ let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
         (a :: acc, t)
     | h :: t -> advance_ordered_list starter_len (h :: acc) t
 
-let split (input: UTF8.t list) =
+let line_to_simple_block (input: UTF8.t list) : simpleBlock list =
     let rec aux acc = function
         | [] -> List.rev acc
         | "" :: t ->
@@ -136,7 +136,6 @@ let split (input: UTF8.t list) =
                         aux (block :: acc) tt
                     | _ -> failwith "never" )
         | h :: t ->
-            (* TODO *)
             let block = Paragraph h in
             aux (block :: acc) t
     in

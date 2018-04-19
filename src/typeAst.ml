@@ -1,6 +1,6 @@
 open Batteries
 
-type inlineElement =
+type spanElement =
     | Ilink of UTF8.t * UTF8.t
     (*alt * url*)
     | Iimage of UTF8.t * UTF8.t
@@ -11,8 +11,8 @@ type inlineElement =
     | Itext of UTF8.t
 
 and blockElement =
-    | Bheading of int * inlineElement list
-    | Bparagraph of inlineElement list
+    | Bheading of int * spanElement list
+    | Bparagraph of spanElement list
     | Bhorizontal
     | Bcode of UTF8.t
     | Bblockquote of blockElement list

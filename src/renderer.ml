@@ -1,21 +1,21 @@
 open Batteries
-open Ast
+open TypeAst
 
 let html_render (input: md_ast) : string =
     let sprintf = Printf.sprintf in
-    let rec inline_to_html : inlineElement -> string = function
+    let rec span_to_html : spanElement -> string = function
         | Ilink (alt, url) -> sprintf "<a href=\"%s\">%s</a>" url alt
         | Iimage (alt, url) -> sprintf "<img src=\"%s\" alt=\"%s\"" url alt
         | Istrong t -> sprintf "<strong>%s</strong>" t
         | Iemphasis t -> sprintf "<em>%s</em>" t
         | Icode t -> sprintf "<code>%s</code>" t
         | Itext t -> sprintf "%s" t
-    and inlines_to_html (inlines: inlineElement list) : string =
-        inlines |> List.map inline_to_html |> String.concat " "
+    and spans_to_html (spans: spanElement list) : string =
+        spans |> List.map span_to_html |> String.concat " "
     in
     let rec block_to_html : blockElement -> string = function
-        | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (inlines_to_html t) i
-        | Bparagraph p -> sprintf "<p>%s</p>" (inlines_to_html p)
+        | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
+        | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
         | Bhorizontal -> sprintf "<hr/>"
         | Bcode c -> sprintf "<pre><code>%s</code></pre>" c
         | Bblockquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
