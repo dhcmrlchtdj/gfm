@@ -6,16 +6,13 @@ let re_ref =
     Regexp.compile
         "^ *\\[((((\\\\\\[)|(\\\\\\])|[^]])+)|(!\\[((\\\\\\[)|(\\\\\\])|[^]])+\\])|(!\\[((\\\\\\[)|(\\\\\\])|[^]])+\\]\\[((\\\\\\[)|(\\\\\\])|[^]])+\\]))\\] *: *([^ <>]+|<[^<>]*>)( .*)?$"
 
-
 let re_ref_end =
     Regexp.compile
         "^ +((\"([^\"\\\\]|\\\\.)*\")|('([^'\\\\]|\\\\.)*')|(\\(([^(\\\\]|\\\\.)*\\))) *$"
 
-
 let re_horizontal =
     Regexp.compile
         "^ *((\\* *\\* *\\* *[\\* ]*)|(\\- *\\- *\\- *[\\- ]*)|(_ *_ *_ *[_ ]*))$"
-
 
 let re_unorder = Regexp.compile "^( *[-+*] +)[^ ]"
 
@@ -28,15 +25,12 @@ let begin_with_four_space (s: string) : bool = String.starts_with s "    "
 let first_non_space (s: string) : char option =
     s |> String.enum |> Enum.drop_while (fun x -> x = ' ') |> Enum.get
 
-
 let include_non_space (len: int) (s: string) : bool =
     s |> String.enum |> Enum.take len
     |> Enum.exists (function ' ' -> false | _ -> true)
 
-
 let space_only (s: string) : bool =
     s |> String.enum |> Enum.for_all (function ' ' -> true | _ -> false)
-
 
 let rec advance_code_block (acc: UTF8.t list) = function
     | [] -> (acc, [])
@@ -45,7 +39,6 @@ let rec advance_code_block (acc: UTF8.t list) = function
     | a :: ("" :: b :: _ as t) when not (begin_with_four_space b) -> (a :: acc, t)
     | [a; ""] -> (a :: acc, [])
     | h :: t -> advance_code_block (h :: acc) t
-
 
 let rec advance_quote_block (acc: UTF8.t list) = function
     | [] -> (acc, [])
@@ -56,7 +49,6 @@ let rec advance_quote_block (acc: UTF8.t list) = function
         when a <> "" && not (begin_with_four_space b) && re_horizontal =~ b ->
         (a :: acc, b :: c)
     | h :: t -> advance_quote_block (h :: acc) t
-
 
 let rec advance_unordered_list (starter: string) (starter_len: int)
         (acc: UTF8.t list) = function
@@ -72,7 +64,6 @@ let rec advance_unordered_list (starter: string) (starter_len: int)
         (a :: acc, t)
     | h :: t -> advance_unordered_list starter starter_len (h :: acc) t
 
-
 let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
     | [] -> (acc, [])
     | "" :: ("" :: _ as t) -> ("" :: acc, t)
@@ -85,7 +76,6 @@ let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
              && (re_unorder =~ b || re_horizontal =~ b) ->
         (a :: acc, t)
     | h :: t -> advance_ordered_list starter_len (h :: acc) t
-
 
 let split (input: UTF8.t list) =
     let rec aux acc = function

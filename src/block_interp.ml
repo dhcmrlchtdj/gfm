@@ -20,7 +20,6 @@ let html_encode (s: string) : string =
     in
     s |> String.to_list |> List.map f |> String.join ""
 
-
 let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
     let m = Regexp.exec re_space line in
     match m with
@@ -29,7 +28,6 @@ let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
             let l = Int.min len starter_len in
             String.lchop ~n:l line
         | _ -> line
-
 
 let unordered_list_item_process (starter_len: int) (lines: UTF8.t list)
     : UTF8.t list =
@@ -40,7 +38,6 @@ let unordered_list_item_process (starter_len: int) (lines: UTF8.t list)
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
 
-
 let ordered_list_item_process (starter_len: int) (lines: UTF8.t list)
     : UTF8.t list =
     let lchop = lchop_space_at_most starter_len in
@@ -49,7 +46,6 @@ let ordered_list_item_process (starter_len: int) (lines: UTF8.t list)
         | h :: t ->
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
-
 
 let interp_block refs = function
     | ReferenceResolutionBlock _ -> []
@@ -119,7 +115,6 @@ let interp_block refs = function
         (* TODO *)
         let p = line in
         ["<p>"; p; "</p>\n"]
-
 
 let interp blocks =
     let refs =
