@@ -1,4 +1,5 @@
 open Batteries
+open TypeAst
 
 type span =
     | Opening of string
@@ -7,6 +8,8 @@ type span =
     | Text of string
 
 type x = Asterisk | Underscore | Link | RawHTML
+
+let parse (text: UTF8.t) : spanElement list = [Itext text]
 
 (* let parse_link (x:char Enum.t) = *)
 (* let parse_root (x: char Enum.t) = *)

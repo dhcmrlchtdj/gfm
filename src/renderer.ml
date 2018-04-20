@@ -11,7 +11,7 @@ let html_render (input: md_ast) : string =
         | Icode t -> sprintf "<code>%s</code>" t
         | Itext t -> sprintf "%s" t
     and spans_to_html (spans: spanElement list) : string =
-        spans |> List.map span_to_html |> String.concat " "
+        spans |> List.map span_to_html |> String.concat ""
     in
     let rec block_to_html : blockElement -> string = function
         | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
@@ -21,6 +21,7 @@ let html_render (input: md_ast) : string =
         | Bblockquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
         | BorderedList ol -> sprintf "<ol>%s</ol>" (listItems_to_html ol)
         | BunorderedList ul -> sprintf "<ul>%s</ul>" (listItems_to_html ul)
+        | Bnull -> ""
     and listItem_to_html (item: blockElement) =
         sprintf "<li>%s</li>" (block_to_html item)
     and listItems_to_html (blocks: blockElement list) : string =

@@ -18,5 +18,6 @@ and blockElement =
     | Bblockquote of blockElement list
     | BorderedList of blockElement list
     | BunorderedList of blockElement list
+    | Bnull
 
 type md_ast = blockElement list

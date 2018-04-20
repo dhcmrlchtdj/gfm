@@ -48,81 +48,65 @@ let ordered_list_item_process (starter_len: int) (lines: UTF8.t list)
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
 
-let interp_block refs = function
-    | ReferenceResolutionBlock _ -> []
-    | NullBlock -> ["\n"]
-    | AtxHeader h -> (
-            match Regexp.exec re_header_text h with
-                | Some [|_; x; y|] ->
-                    let len = Int.min 6 (String.length x) in
-                    let open_tag = P.sprintf "<h%d>" len in
-                    let close_tag = P.sprintf "</h%d>\n" len in
-                    let title = y |> String.trim in
-                    (* TODO *)
-                    [open_tag; title; close_tag]
-                | _ ->
-                    match Regexp.exec re_header_empty h with
-                        | Some [|_; x|] ->
-                            let len = Int.min 6 (String.length x) in
-                            let open_tag = P.sprintf "<h%d>" len in
-                            let close_tag = P.sprintf "</h%d>\n" len in
-                            [open_tag; close_tag]
-                        | _ -> failwith "never" )
-    | SetexHeader (h, l) -> (
-            (* TODO *)
-            let title = h |> String.trim in
-            match l.[0] with
-                | '=' -> ["<h1>"; title; "</h1>\n"]
-                | '-' -> ["<h2>"; title; "</h2>\n"]
-                | _ -> failwith "never" )
-    | CodeBlock lines ->
-        let open_tag = "<pre><code>" in
-        let close_tag = "</code></pre>\n" in
-        let f line acc =
-            let t = line |> String.lchop ~n:4 |> html_encode in
-            t :: "\n" :: acc
-        in
-        let l = List.fold_right f lines [close_tag] in
-        open_tag :: l
-    | BlockQuote _ -> ["TODO"]
-    | HorizontalRule -> ["<hr/>\n"]
-    | UnorderedList (lines, starter_len) ->
-        let open_tag = "<ul>\n" in
-        let close_tag = "</ul>\n" in
-        let f line acc =
-            (* TODO *)
-            let t = line |> P.sprintf "<li>%s</li>\n" in
-            t :: acc
-        in
-        let l =
-            lines |> unordered_list_item_process starter_len
-            |> fun x -> List.fold_right f x [close_tag]
-        in
-        open_tag :: l
-    | OrderedList (lines, starter_len) ->
-        let open_tag = "<ol>\n" in
-        let close_tag = "</ol>\n" in
-        let f line acc =
-            (* TODO *)
-            let t = line |> P.sprintf "<li>%s</li>\n" in
-            t :: acc
-        in
-        let l =
-            lines |> ordered_list_item_process starter_len
-            |> fun x -> List.fold_right f x [close_tag]
-        in
-        open_tag :: l
-    | Paragraph line ->
-        (* TODO *)
-        let p = line in
-        ["<p>"; p; "</p>\n"]
-
-let interp blocks =
-    let refs =
-        blocks
-        |> List.filter (function ReferenceResolutionBlock _ -> true | _ -> false)
+let simple_block_to_block (blocks: simpleBlock list) : md_ast =
+    let aux : simpleBlock -> blockElement = function
+        | ReferenceResolutionBlock _ -> Bnull
+        | NullBlock -> Bnull
+        | HorizontalRule -> Bhorizontal
+        | AtxHeader h -> (
+                match Regexp.exec re_header_text h with
+                    | Some [|_; x; y|] ->
+                        let len = Int.min 6 (String.length x) in
+                        let title = y |> String.trim |> ParseSpan.parse in
+                        Bheading (len, title)
+                    | _ ->
+                        match Regexp.exec re_header_empty h with
+                            | Some [|_; x|] ->
+                                let len = Int.min 6 (String.length x) in
+                                Bheading (len, [])
+                            | _ -> failwith "never" )
+        | SetexHeader (h, l) -> (
+                let title = h |> String.trim |> ParseSpan.parse in
+                match l.[0] with
+                    | '=' -> Bheading (1, title)
+                    | '-' -> Bheading (2, title)
+                    | _ -> failwith "never" )
+        | Paragraph line ->
+            let p = line |> ParseSpan.parse in
+            Bparagraph p
+        | CodeBlock lines ->
+            let f line acc =
+                let t = line |> String.lchop ~n:4 |> html_encode in
+                t :: "\n" :: acc
+            in
+            let codes = List.fold_right f lines [] |> String.concat "" in
+            Bcode codes
+        | BlockQuote t -> ParseSpan.parse t
+        | UnorderedList (lines, starter_len) ->
+            let open_tag = "<ul>\n" in
+            let close_tag = "</ul>\n" in
+            let f line acc =
+                (* TODO *)
+                let t = line |> P.sprintf "<li>%s</li>\n" in
+                t :: acc
+            in
+            let l =
+                lines |> unordered_list_item_process starter_len
+                |> fun x -> List.fold_right f x [close_tag]
+            in
+            open_tag :: l
+        | OrderedList (lines, starter_len) ->
+            let open_tag = "<ol>\n" in
+            let close_tag = "</ol>\n" in
+            let f line acc =
+                (* TODO *)
+                let t = line |> P.sprintf "<li>%s</li>\n" in
+                t :: acc
+            in
+            let l =
+                lines |> ordered_list_item_process starter_len
+                |> fun x -> List.fold_right f x [close_tag]
+            in
+            open_tag :: l
     in
-    let f = interp_block refs in
-    blocks |> List.map f |> List.flatten |> String.join ""
-
-let simple_block_to_block (block: simpleBlock list) : md_ast = [Bhorizontal]
+    blocks |> List.map aux
