@@ -1,5 +1,5 @@
 open Batteries
-open TypeAst
+open Types
 
 type span =
     | Opening of string

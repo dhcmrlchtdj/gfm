@@ -26,7 +26,9 @@ let first_non_space (s: string) : char option =
     s |> String.enum |> Enum.drop_while (fun x -> x = ' ') |> Enum.get
 
 let include_non_space (len: int) (s: string) : bool =
-    s |> String.enum |> Enum.take len
+    s
+    |> String.enum
+    |> Enum.take len
     |> Enum.exists (function ' ' -> false | _ -> true)
 
 let space_only (s: string) : bool =
@@ -58,9 +60,11 @@ let rec advance_unordered_list (starter: string) (starter_len: int)
         when not (String.starts_with a starter) && include_non_space starter_len a ->
         ("" :: acc, t)
     | a :: (b :: _ as t)
-        when a <> "" && not (String.starts_with b starter)
-             && include_non_space starter_len b && not (begin_with_four_space b)
-             && (re_unorder =~ b || re_order =~ b || re_horizontal =~ b) ->
+        when a <> ""
+          && not (String.starts_with b starter)
+          && include_non_space starter_len b
+          && not (begin_with_four_space b)
+          && (re_unorder =~ b || re_order =~ b || re_horizontal =~ b) ->
         (a :: acc, t)
     | h :: t -> advance_unordered_list starter starter_len (h :: acc) t
 
@@ -71,9 +75,11 @@ let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
         when not (re_order =~ a) && include_non_space starter_len a ->
         ("" :: acc, t)
     | a :: (b :: _ as t)
-        when a <> "" && not (re_order =~ b) && include_non_space starter_len b
-             && not (begin_with_four_space b)
-             && (re_unorder =~ b || re_horizontal =~ b) ->
+        when a <> ""
+          && not (re_order =~ b)
+          && include_non_space starter_len b
+          && not (begin_with_four_space b)
+          && (re_unorder =~ b || re_horizontal =~ b) ->
         (a :: acc, t)
     | h :: t -> advance_ordered_list starter_len (h :: acc) t
 
@@ -89,7 +95,8 @@ let line_to_simple_block (input: UTF8.t list) : simpleBlock list =
                     | Some mm ->
                         let trailing_seq = mm.(18) in
                         let b, tt =
-                            if space_only trailing_seq then
+                            if space_only trailing_seq
+                            then
                                 match t with
                                     | x :: (_ :: _ as y) when re_ref_end =~ x -> ([h; x], y)
                                     | _ -> ([h], t)

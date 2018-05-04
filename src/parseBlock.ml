@@ -1,7 +1,6 @@
 open Batteries
 open Regexp.Infix
-open TypeSimpleBlock
-open TypeAst
+open Types
 module P = Printf
 
 let re_header_text = Regexp.compile "^(#+)(.*[^#])#*$"
@@ -30,8 +29,8 @@ let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
             String.lchop ~n:l line
         | _ -> line
 
-let unordered_list_item_process (starter_len: int) (lines: UTF8.t list)
-    : UTF8.t list =
+let unordered_list_item_process (starter_len: int) (lines: UTF8.t list) :
+    UTF8.t list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
         | [] -> []
@@ -39,8 +38,8 @@ let unordered_list_item_process (starter_len: int) (lines: UTF8.t list)
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
 
-let ordered_list_item_process (starter_len: int) (lines: UTF8.t list)
-    : UTF8.t list =
+let ordered_list_item_process (starter_len: int) (lines: UTF8.t list) :
+    UTF8.t list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
         | [] -> []
@@ -91,7 +90,8 @@ let simple_block_to_block (blocks: simpleBlock list) : md_ast =
                 t :: acc
             in
             let l =
-                lines |> unordered_list_item_process starter_len
+                lines
+                |> unordered_list_item_process starter_len
                 |> fun x -> List.fold_right f x [close_tag]
             in
             open_tag :: l
@@ -104,7 +104,8 @@ let simple_block_to_block (blocks: simpleBlock list) : md_ast =
                 t :: acc
             in
             let l =
-                lines |> ordered_list_item_process starter_len
+                lines
+                |> ordered_list_item_process starter_len
                 |> fun x -> List.fold_right f x [close_tag]
             in
             open_tag :: l

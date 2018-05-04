@@ -1,5 +1,5 @@
 open Batteries
-open TypeAst
+open Types
 
 let html_render (input: md_ast) : string =
     let sprintf = Printf.sprintf in
