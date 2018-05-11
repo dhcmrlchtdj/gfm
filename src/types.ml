@@ -2,31 +2,29 @@ open Batteries
 
 type simpleBlock =
     | NullBlock
-    | AtxHeader of UTF8.t
-    | SetexHeader of UTF8.t * UTF8.t
-    | CodeBlock of UTF8.t list
-    | BlockQuote of UTF8.t list
+    | AtxHeader of string
+    | SetexHeader of string * string
+    | CodeBlock of string list
+    | BlockQuote of string list
     | HorizontalRule
-    | UnorderedList of UTF8.t list * int
-    | OrderedList of UTF8.t list * int
-    | Paragraph of UTF8.t
-    | ReferenceResolutionBlock of UTF8.t list
+    | UnorderedList of string list * int
+    | OrderedList of string list * int
+    | Paragraph of string
+    | ReferenceResolutionBlock of string list
 
 type spanElement =
-    | Ilink of UTF8.t * UTF8.t
-    (*alt * url*)
-    | Iimage of UTF8.t * UTF8.t
-    (*alt * url*)
-    | Istrong of UTF8.t
-    | Iemphasis of UTF8.t
-    | Icode of UTF8.t
-    | Itext of UTF8.t
+    | Stext of string
+    | Scode of string
+    | Semphasis of spanElement list
+    | Sstrong of spanElement list
+    | Slink of spanElement list * string
+    | Simage of string * string
 
 and blockElement =
     | Bheading of int * spanElement list
     | Bparagraph of spanElement list
     | Bhorizontal
-    | Bcode of UTF8.t
+    | Bcode of string
     | Bblockquote of blockElement list
     | BorderedList of blockElement list
     | BunorderedList of blockElement list

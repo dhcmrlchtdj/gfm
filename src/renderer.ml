@@ -4,12 +4,13 @@ open Types
 let html_render (input: md_ast) : string =
     let sprintf = Printf.sprintf in
     let rec span_to_html : spanElement -> string = function
-        | Ilink (alt, url) -> sprintf "<a href=\"%s\">%s</a>" url alt
-        | Iimage (alt, url) -> sprintf "<img src=\"%s\" alt=\"%s\"" url alt
-        | Istrong t -> sprintf "<strong>%s</strong>" t
-        | Iemphasis t -> sprintf "<em>%s</em>" t
-        | Icode t -> sprintf "<code>%s</code>" t
-        | Itext t -> sprintf "%s" t
+        | Slink (text, url) ->
+            sprintf "<a href=\"%s\">%s</a>" url (spans_to_html text)
+        | Simage (alt, url) -> sprintf "<img src=\"%s\" alt=\"%s\"" url alt
+        | Sstrong t -> sprintf "<strong>%s</strong>" (spans_to_html t)
+        | Semphasis t -> sprintf "<em>%s</em>" (spans_to_html t)
+        | Scode t -> sprintf "<code>%s</code>" t
+        | Stext t -> sprintf "%s" t
     and spans_to_html (spans: spanElement list) : string =
         spans |> List.map span_to_html |> String.concat ""
     in

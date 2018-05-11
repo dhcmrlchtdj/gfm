@@ -20,7 +20,7 @@ let html_encode (s: string) : string =
     in
     s |> String.to_list |> List.map f |> String.join ""
 
-let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
+let lchop_space_at_most (starter_len: int) (line: string) : string =
     let m = Regexp.exec re_space line in
     match m with
         | Some [|_; sp|] ->
@@ -29,8 +29,8 @@ let lchop_space_at_most (starter_len: int) (line: UTF8.t) : UTF8.t =
             String.lchop ~n:l line
         | _ -> line
 
-let unordered_list_item_process (starter_len: int) (lines: UTF8.t list) :
-    UTF8.t list =
+let unordered_list_item_process (starter_len: int) (lines: string list) :
+    string list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
         | [] -> []
@@ -38,8 +38,8 @@ let unordered_list_item_process (starter_len: int) (lines: UTF8.t list) :
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
 
-let ordered_list_item_process (starter_len: int) (lines: UTF8.t list) :
-    UTF8.t list =
+let ordered_list_item_process (starter_len: int) (lines: string list) :
+    string list =
     let lchop = lchop_space_at_most starter_len in
     match lines with
         | [] -> []

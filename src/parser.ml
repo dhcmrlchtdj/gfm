@@ -1,14 +1,14 @@
 open Batteries
 
-let trim_bom (input: UTF8.t) : UTF8.t =
+let trim_bom (input: string) : string =
     if String.starts_with input "\239\187\191"
     then String.sub input 3 (String.length input - 3)
     else input
 
-let replace_crlf (input: UTF8.t) : UTF8.t =
+let replace_crlf (input: string) : string =
     String.nreplace ~str:input ~sub:"\r\n" ~by:"\n"
 
-let expand_tab (input: UTF8.t) : UTF8.t =
+let expand_tab (input: string) : string =
     if String.exists input "\t"
     then
         let f (p, acc) curr =
@@ -25,11 +25,11 @@ let expand_tab (input: UTF8.t) : UTF8.t =
         |> String.of_list
     else input
 
-let normalize (input: string) : UTF8.t =
+let normalize (input: string) : string =
     UTF8.validate input ;
     input |> trim_bom |> replace_crlf
 
-let split_to_line (input: UTF8.t) : UTF8.t list =
+let split_to_line (input: string) : string list =
     input |> String.split_on_char '\n' |> List.map expand_tab
 
 let parse (input: string) : TypeAst.md_ast =

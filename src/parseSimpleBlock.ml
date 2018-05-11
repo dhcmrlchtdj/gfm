@@ -34,7 +34,7 @@ let include_non_space (len: int) (s: string) : bool =
 let space_only (s: string) : bool =
     s |> String.enum |> Enum.for_all (function ' ' -> true | _ -> false)
 
-let rec advance_code_block (acc: UTF8.t list) = function
+let rec advance_code_block (acc: string list) = function
     | [] -> (acc, [])
     | a :: (b :: _ as t) when b <> "" && not (begin_with_four_space b) ->
         (a :: acc, t)
@@ -42,7 +42,7 @@ let rec advance_code_block (acc: UTF8.t list) = function
     | [a; ""] -> (a :: acc, [])
     | h :: t -> advance_code_block (h :: acc) t
 
-let rec advance_quote_block (acc: UTF8.t list) = function
+let rec advance_quote_block (acc: string list) = function
     | [] -> (acc, [])
     | "" :: ("" :: _ as t) -> ("" :: acc, t)
     | "" :: (a :: _ as t) when begin_with_four_space a -> ("" :: acc, t)
@@ -53,7 +53,7 @@ let rec advance_quote_block (acc: UTF8.t list) = function
     | h :: t -> advance_quote_block (h :: acc) t
 
 let rec advance_unordered_list (starter: string) (starter_len: int)
-        (acc: UTF8.t list) = function
+        (acc: string list) = function
     | [] -> (acc, [])
     | "" :: ("" :: _ as t) -> ("" :: acc, t)
     | "" :: (a :: _ as t)
@@ -68,7 +68,7 @@ let rec advance_unordered_list (starter: string) (starter_len: int)
         (a :: acc, t)
     | h :: t -> advance_unordered_list starter starter_len (h :: acc) t
 
-let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
+let rec advance_ordered_list (starter_len: int) (acc: string list) = function
     | [] -> (acc, [])
     | "" :: ("" :: _ as t) -> ("" :: acc, t)
     | "" :: (a :: _ as t)
@@ -83,7 +83,7 @@ let rec advance_ordered_list (starter_len: int) (acc: UTF8.t list) = function
         (a :: acc, t)
     | h :: t -> advance_ordered_list starter_len (h :: acc) t
 
-let line_to_simple_block (input: UTF8.t list) : simpleBlock list =
+let line_to_simple_block (input: string list) : simpleBlock list =
     let rec aux acc = function
         | [] -> List.rev acc
         | "" :: t ->
