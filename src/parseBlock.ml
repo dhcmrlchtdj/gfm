@@ -1,5 +1,4 @@
 open Batteries
-open Regexp.Infix
 open Types
 module P = Printf
 
@@ -16,7 +15,7 @@ let html_encode (s: string) : string =
         | '&' -> "&amp;"
         | '"' -> "&quot;"
         | '\'' -> "&#x27;"
-        | c -> Char.escaped c
+        | c -> String.of_char c
     in
     s |> String.to_list |> List.map f |> String.join ""
 
@@ -46,6 +45,8 @@ let ordered_list_item_process (starter_len: int) (lines: string list) :
         | h :: t ->
             let hh = String.lchop ~n:starter_len h in
             hh :: (t |> List.map lchop)
+
+let line_to_paragraph = List.map (fun line -> Bparagraph (ParseSpan.parse line))
 
 let simple_block_to_block (blocks: simpleBlock list) : md_ast =
     let aux : simpleBlock -> blockElement = function
@@ -80,34 +81,16 @@ let simple_block_to_block (blocks: simpleBlock list) : md_ast =
             in
             let codes = List.fold_right f lines [] |> String.concat "" in
             Bcode codes
-        | BlockQuote t -> ParseSpan.parse t
+        | BlockQuote t -> Bblockquote (line_to_paragraph t)
         | UnorderedList (lines, starter_len) ->
-            let open_tag = "<ul>\n" in
-            let close_tag = "</ul>\n" in
-            let f line acc =
-                (* TODO *)
-                let t = line |> P.sprintf "<li>%s</li>\n" in
-                t :: acc
+            let x =
+                lines |> unordered_list_item_process starter_len |> line_to_paragraph
             in
-            let l =
-                lines
-                |> unordered_list_item_process starter_len
-                |> fun x -> List.fold_right f x [close_tag]
-            in
-            open_tag :: l
+            BunorderedList x
         | OrderedList (lines, starter_len) ->
-            let open_tag = "<ol>\n" in
-            let close_tag = "</ol>\n" in
-            let f line acc =
-                (* TODO *)
-                let t = line |> P.sprintf "<li>%s</li>\n" in
-                t :: acc
+            let x =
+                lines |> ordered_list_item_process starter_len |> line_to_paragraph
             in
-            let l =
-                lines
-                |> ordered_list_item_process starter_len
-                |> fun x -> List.fold_right f x [close_tag]
-            in
-            open_tag :: l
+            BorderedList x
     in
     blocks |> List.map aux

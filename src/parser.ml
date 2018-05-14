@@ -32,7 +32,7 @@ let normalize (input: string) : string =
 let split_to_line (input: string) : string list =
     input |> String.split_on_char '\n' |> List.map expand_tab
 
-let parse (input: string) : TypeAst.md_ast =
+let parse (input: string) : Types.md_ast =
     input
     |> normalize
     |> split_to_line

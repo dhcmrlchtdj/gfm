@@ -1,6 +1,6 @@
 open Batteries
 open Regexp.Infix
-open TypeSimpleBlock
+open Types
 
 let re_ref =
     Regexp.compile

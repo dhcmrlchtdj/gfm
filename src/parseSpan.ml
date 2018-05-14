@@ -147,7 +147,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
                 match find_match h acc with
                     | Some acc2 -> aux acc2 t
                     | None -> aux (T h :: acc) t )
-        | [] -> to_spans acc
+        | [] -> to_spans (List.rev acc)
     in
     aux [] tokens
 

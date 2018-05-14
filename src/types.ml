@@ -1,5 +1,3 @@
-open Batteries
-
 type simpleBlock =
     | NullBlock
     | AtxHeader of string
