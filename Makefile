@@ -20,8 +20,6 @@ main: $(mlis)
 	@$(OCB) src/main.byte
 
 test: main
-	# ./vfmd-test/run_tests --actual-fails --expected-fails --dir './vfmd-test/tests/**/*' './main.byte -'
-	# ./vfmd-test/run_tests --dir './vfmd-test/tests/**/*' './main.byte -'
 	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.byte -
 
 $(mlis):
