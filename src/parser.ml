@@ -25,16 +25,11 @@ let expand_tab (input: string) : string =
         |> String.of_list
     else input
 
-let normalize (input: string) : string =
-    UTF8.validate input ;
-    input |> trim_bom |> replace_crlf
-
-let split_to_line (input: string) : string list =
-    input |> String.split_on_char '\n' |> List.map expand_tab
-
 let parse (input: string) : Types.md_ast =
+    UTF8.validate input ;
     input
-    |> normalize
-    |> split_to_line
-    |> ParseSimpleBlock.line_to_simple_block
-    |> ParseBlock.simple_block_to_block
+    |> trim_bom
+    |> replace_crlf
+    |> String.split_on_char '\n'
+    |> List.map expand_tab
+    |> ParseBlock.parse

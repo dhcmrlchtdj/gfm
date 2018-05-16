@@ -15,14 +15,13 @@ let html_render (input: md_ast) : string =
         spans |> List.map span_to_html |> String.concat ""
     in
     let rec block_to_html : blockElement -> string = function
+        | Bline -> sprintf "<hr/>"
         | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
         | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
-        | Bhorizontal -> sprintf "<hr/>"
         | Bcode c -> sprintf "<pre><code>%s</code></pre>" c
-        | Bblockquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
-        | BorderedList ol -> sprintf "<ol>%s</ol>" (listItems_to_html ol)
-        | BunorderedList ul -> sprintf "<ul>%s</ul>" (listItems_to_html ul)
-        | Bnull -> ""
+        | Bquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
+        | Blist ul -> sprintf "<ul>%s</ul>" (listItems_to_html ul)
+        | Bseq s -> sprintf "<p>%s</p>" (spans_to_html s)
     and listItem_to_html (item: blockElement) =
         sprintf "<li>%s</li>" (block_to_html item)
     and listItems_to_html (blocks: blockElement list) : string =

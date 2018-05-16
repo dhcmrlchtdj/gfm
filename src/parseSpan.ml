@@ -49,6 +49,7 @@ let chars_to_tokens (chars: char list) : token list =
     aux [] chars
 
 let tokens_to_spans (tokens: token list) : spanElement list =
+    let sprintf = Printf.sprintf in
     let to_span (t: token) =
         let convert = function
             | TstrongA -> "**"
@@ -57,8 +58,8 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | TemphasisU -> "_"
             | TimgOpen -> "!["
             | TlinkOpen -> "["
-            | TlinkClose l -> Printf.sprintf "](%s" l
-            | Tcode s -> Printf.sprintf "`%s`" s
+            | TlinkClose l -> sprintf "](%s" l
+            | Tcode s -> sprintf "`%s`" s
             | Tchar c -> String.of_char c
         in
         Stext (convert t)
@@ -76,16 +77,16 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | Stext s :: t -> aux (s :: acc) t
             | Scode s :: t -> aux (s :: acc) t
             | Sstrong s :: t ->
-                let ss = Printf.sprintf "**%s**" (to_text s) in
+                let ss = sprintf "**%s**" (to_text s) in
                 aux (ss :: acc) t
             | Semphasis s :: t ->
-                let ss = Printf.sprintf "*%s*" (to_text s) in
+                let ss = sprintf "*%s*" (to_text s) in
                 aux (ss :: acc) t
             | Slink (text, url) :: t ->
-                let ss = Printf.sprintf "[%s](%s)" (to_text text) url in
+                let ss = sprintf "[%s](%s)" (to_text text) url in
                 aux (ss :: acc) t
             | Simage (alt, url) :: t ->
-                let ss = Printf.sprintf "![%s](%s)" alt url in
+                let ss = sprintf "![%s](%s)" alt url in
                 aux (ss :: acc) t
             | [] -> List.rev acc
         in

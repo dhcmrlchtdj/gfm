@@ -1,15 +1,3 @@
-type simpleBlock =
-    | NullBlock
-    | AtxHeader of string
-    | SetexHeader of string * string
-    | CodeBlock of string list
-    | BlockQuote of string list
-    | HorizontalRule
-    | UnorderedList of string list * int
-    | OrderedList of string list * int
-    | Paragraph of string
-    | ReferenceResolutionBlock of string list
-
 type spanElement =
     | Stext of string
     | Scode of string
@@ -19,13 +7,12 @@ type spanElement =
     | Simage of string * string
 
 and blockElement =
+    | Bline
+    | Bcode of string
     | Bheading of int * spanElement list
     | Bparagraph of spanElement list
-    | Bhorizontal
-    | Bcode of string
-    | Bblockquote of blockElement list
-    | BorderedList of blockElement list
-    | BunorderedList of blockElement list
-    | Bnull
+    | Bseq of spanElement list
+    | Bquote of blockElement list
+    | Blist of blockElement list
 
 type md_ast = blockElement list

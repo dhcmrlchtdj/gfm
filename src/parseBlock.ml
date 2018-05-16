@@ -1,12 +1,75 @@
 open Batteries
 open Types
-module P = Printf
+
+type simpleBlock =
+    | Line
+    | Code of string list
+    | Paragraph of string
+    | Heading of string
+    | Quote of string list
+    | List of string list
+
+let advance_code_block (input: string list) =
+    let rec aux acc = function
+        | [] -> (List.rev acc, [])
+        | "```" :: t -> (List.rev acc, t)
+        | h :: t -> aux (h :: acc) t
+    in
+    aux [] input
+
+let advance_quote_block (input: string list) =
+    let rec aux acc = function
+        | h :: t when String.starts_with h "> " ->
+            let line = String.sub h 2 (String.length h - 2) in
+            aux (line :: acc) t
+        | [] -> (List.rev acc, [])
+        | _ as t -> (List.rev acc, t)
+    in
+    aux [] input
+
+let advance_list_block (input: string list) =
+    let rec aux acc = function
+        | h :: t when String.starts_with h "- " ->
+            let line = String.sub h 2 (String.length h - 2) in
+            aux (line :: acc) t
+        | [] -> (List.rev acc, [])
+        | _ as t -> (List.rev acc, t)
+    in
+    aux [] input
+
+let lines_to_simple (input: string list) : simpleBlock list =
+    let rec aux acc = function
+        | [] -> List.rev acc
+        | "" :: t -> aux acc t
+        | h :: t when String.starts_with h "---" ->
+            let block = Line in
+            aux (block :: acc) t
+        | h :: t when String.starts_with h "#" ->
+            let block = Heading h in
+            aux (block :: acc) t
+        | h :: t when String.starts_with h "```" ->
+            let codes, tt = advance_code_block t in
+            let block = Code codes in
+            aux (block :: acc) tt
+        | h :: t when String.starts_with h "> " ->
+            let b, tt = advance_quote_block (h :: t) in
+            let block = Quote b in
+            aux (block :: acc) tt
+        | h :: t when String.starts_with h "- " ->
+            let b, tt = advance_list_block (h :: t) in
+            let block = List b in
+            aux (block :: acc) tt
+        | h :: t ->
+            let block = Paragraph h in
+            aux (block :: acc) t
+    in
+    aux [] input
+
+(* *** *)
 
 let re_header_text = Regexp.compile "^(#+)(.*[^#])#*$"
 
 let re_header_empty = Regexp.compile "^(#+)$"
-
-let re_space = Regexp.compile "^( *)"
 
 let html_encode (s: string) : string =
     let f = function
@@ -17,80 +80,37 @@ let html_encode (s: string) : string =
         | '\'' -> "&#x27;"
         | c -> String.of_char c
     in
-    s |> String.to_list |> List.map f |> String.join ""
+    s |> String.to_list |> List.map f |> String.concat ""
 
-let lchop_space_at_most (starter_len: int) (line: string) : string =
-    let m = Regexp.exec re_space line in
-    match m with
-        | Some [|_; sp|] ->
-            let len = String.length sp in
-            let l = Int.min len starter_len in
-            String.lchop ~n:l line
-        | _ -> line
-
-let unordered_list_item_process (starter_len: int) (lines: string list) :
-    string list =
-    let lchop = lchop_space_at_most starter_len in
-    match lines with
-        | [] -> []
-        | h :: t ->
-            let hh = String.lchop ~n:starter_len h in
-            hh :: (t |> List.map lchop)
-
-let ordered_list_item_process (starter_len: int) (lines: string list) :
-    string list =
-    let lchop = lchop_space_at_most starter_len in
-    match lines with
-        | [] -> []
-        | h :: t ->
-            let hh = String.lchop ~n:starter_len h in
-            hh :: (t |> List.map lchop)
-
-let line_to_paragraph = List.map (fun line -> Bparagraph (ParseSpan.parse line))
-
-let simple_block_to_block (blocks: simpleBlock list) : md_ast =
+let rec simple_to_block (input: simpleBlock list) : md_ast =
     let aux : simpleBlock -> blockElement = function
-        | ReferenceResolutionBlock _ -> Bnull
-        | NullBlock -> Bnull
-        | HorizontalRule -> Bhorizontal
-        | AtxHeader h -> (
-                match Regexp.exec re_header_text h with
+        | Line -> Bline
+        | Paragraph line -> Bparagraph (ParseSpan.parse line)
+        | Heading line -> (
+                match Regexp.exec re_header_text line with
                     | Some [|_; x; y|] ->
                         let len = Int.min 6 (String.length x) in
                         let title = y |> String.trim |> ParseSpan.parse in
                         Bheading (len, title)
                     | _ ->
-                        match Regexp.exec re_header_empty h with
+                        match Regexp.exec re_header_empty line with
                             | Some [|_; x|] ->
                                 let len = Int.min 6 (String.length x) in
                                 Bheading (len, [])
                             | _ -> failwith "never" )
-        | SetexHeader (h, l) -> (
-                let title = h |> String.trim |> ParseSpan.parse in
-                match l.[0] with
-                    | '=' -> Bheading (1, title)
-                    | '-' -> Bheading (2, title)
-                    | _ -> failwith "never" )
-        | Paragraph line ->
-            let p = line |> ParseSpan.parse in
-            Bparagraph p
-        | CodeBlock lines ->
-            let f line acc =
-                let t = line |> String.lchop ~n:4 |> html_encode in
-                t :: "\n" :: acc
-            in
-            let codes = List.fold_right f lines [] |> String.concat "" in
-            Bcode codes
-        | BlockQuote t -> Bblockquote (line_to_paragraph t)
-        | UnorderedList (lines, starter_len) ->
-            let x =
-                lines |> unordered_list_item_process starter_len |> line_to_paragraph
-            in
-            BunorderedList x
-        | OrderedList (lines, starter_len) ->
-            let x =
-                lines |> ordered_list_item_process starter_len |> line_to_paragraph
-            in
-            BorderedList x
+        | Code lines ->
+            let code = lines |> List.map html_encode |> String.concat "\n" in
+            Bcode code
+        | Quote lines ->
+            let q = lines |> lines_to_simple |> simple_to_block in
+            Bquote q
+        | List lines ->
+            let l = lines |> List.map (fun line -> Bseq (ParseSpan.parse line)) in
+            Blist l
     in
-    blocks |> List.map aux
+    List.map aux input
+
+(* *** *)
+
+let parse (input: string list) : md_ast =
+    input |> lines_to_simple |> simple_to_block
