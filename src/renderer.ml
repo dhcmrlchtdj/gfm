@@ -37,12 +37,12 @@ let html_render (input: md_ast) : string =
         | Bquote b -> sprintf "<blockquote>\n%s\n</blockquote>" (blocks_to_html b)
         | Blist ul -> sprintf "<ul>\n%s\n</ul>" (listItems_to_html ul)
         | Bseq s -> sprintf "%s" (spans_to_html s)
-    and listItem_to_html (item: blockElement) =
-        sprintf "<li>%s</li>" (block_to_html item)
-    and listItems_to_html (blocks: blockElement list) : string =
+    and listItem_to_html (item: blockElement list) =
+        sprintf "<li>%s</li>" (blocks_to_html item)
+    and listItems_to_html (blocks: blockElement list list) : string =
         blocks |> List.map listItem_to_html |> String.concat "\n"
     and blocks_to_html (blocks: blockElement list) : string =
         blocks |> List.map block_to_html |> String.concat "\n"
     in
     let md_to_html (md: md_ast) : string = sprintf "%s\n" (blocks_to_html md) in
-  md_to_html input
+    md_to_html input

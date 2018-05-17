@@ -13,6 +13,6 @@ and blockElement =
     | Bparagraph of spanElement list
     | Bseq of spanElement list
     | Bquote of blockElement list
-    | Blist of blockElement list
+    | Blist of blockElement list list
 
 type md_ast = blockElement list

@@ -25,23 +25,31 @@ let advance_quote_block (input: string list) =
     aux [] input
 
 let advance_list_block (input: string list) =
-    let rec aux acc = function
-        | h :: t when re_list_prefix =~ h -> aux (h :: acc) t
-        | [] -> (List.rev acc, [])
-        | _ as t -> (List.rev acc, t)
+    let read_block (input: string list) : string list * string list =
+        let rec aux acc = function
+            | h :: t when re_list_prefix =~ h -> aux (h :: acc) t
+            | [] -> (List.rev acc, [])
+            | _ as t -> (List.rev acc, t)
+        in
+        aux [] input
     in
-    aux [] input
-
-let split_list_block (input: string list) =
-    let rec aux acc curr = function
-        | [] -> List.rev (List.rev curr :: acc)
-        | h :: t when String.starts_with h "- " -> aux (List.rev curr :: acc) [h] t
-        | h :: t -> aux acc (h :: curr) t
+    let split_block (input: string list) : string list list =
+        let rec aux acc curr = function
+            | [] -> (
+                    match curr with
+                        | [] -> List.rev acc
+                        | _ -> List.rev (List.rev curr :: acc) )
+            | h :: t when String.starts_with h "- " -> (
+                    match curr with
+                        | [] -> aux acc [h] t
+                        | _ -> aux (List.rev curr :: acc) [h] t )
+            | h :: t -> aux acc (h :: curr) t
+        in
+        aux [] [] input
     in
-    aux [] [] input
-
-let parse_list_item (input: string list) =
-    List.map (fun line -> Bseq (ParseSpan.parse line)) input
+    let block, tt = read_block input in
+    let list_items = split_block block in
+    (list_items, tt)
 
 let parse (input: string list) : blockElement list =
     let rec aux acc = function
@@ -73,13 +81,24 @@ let parse (input: string list) : blockElement list =
             let block = Bquote quote in
             aux (block :: acc) tt
         | h :: t when String.starts_with h "- " ->
-            let lines, tt = advance_list_block (h :: t) in
-            let list_items = split_list_block lines in
-            let lst = list_items |> List.map parse_list_item |> List.map List.hd in
+            let list_items, tt = advance_list_block (h :: t) in
+            let lst = List.map parse_list_item list_items in
             let block = Blist lst in
             aux (block :: acc) tt
         | h :: t ->
             let block = Bparagraph (ParseSpan.parse h) in
             aux (block :: acc) t
+    and parse_list_item (input: string list) : blockElement list =
+        match input with
+            | [] -> failwith "parse_list_item"
+            | [h] ->
+                let line = String.lchop ~n:2 h in
+                [Bseq (ParseSpan.parse line)]
+            | h :: t ->
+                let hh = String.lchop ~n:2 h in
+                let hhh = Bseq (ParseSpan.parse hh) in
+                let tt = List.map (fun l -> String.lchop ~n:4 l) t in
+                let ttt = aux [] tt in
+                hhh :: ttt
     in
     aux [] input
