@@ -18,7 +18,9 @@ let html_render (input: md_ast) : string =
         | Bline -> sprintf "<hr/>"
         | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
         | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
-        | Bcode c -> sprintf "<pre><code>%s</code></pre>" c
+        | Bcode (Some l, c) ->
+            sprintf "<pre><code class=\"language-%s\">%s</code></pre>" l c
+        | Bcode (None, c) -> sprintf "<pre><code>%s</code></pre>" c
         | Bquote b -> sprintf "<blockquote>\n%s\n</blockquote>" (blocks_to_html b)
         | Blist ul -> sprintf "<ul>\n%s\n</ul>" (listItems_to_html ul)
         | Bseq s -> sprintf "%s" (spans_to_html s)
@@ -30,4 +32,4 @@ let html_render (input: md_ast) : string =
         blocks |> List.map block_to_html |> String.concat "\n"
     in
     let md_to_html (md: md_ast) : string = sprintf "%s\n" (blocks_to_html md) in
-    md_to_html input
+  md_to_html input

@@ -8,7 +8,7 @@ type spanElement =
 
 and blockElement =
     | Bline
-    | Bcode of string
+    | Bcode of string option * string
     | Bheading of int * spanElement list
     | Bparagraph of spanElement list
     | Bseq of spanElement list
