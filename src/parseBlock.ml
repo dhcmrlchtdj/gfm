@@ -6,17 +6,6 @@ let re_heading = Regexp.compile "^(#+)\\s*(.*)$"
 
 let re_list_prefix = Regexp.compile "^(    )*- "
 
-let html_encode (s: string) : string =
-    let f = function
-        | '<' -> "&lt;"
-        | '>' -> "&gt;"
-        | '&' -> "&amp;"
-        | '"' -> "&quot;"
-        | '\'' -> "&#x27;"
-        | c -> String.of_char c
-    in
-    s |> String.to_list |> List.map f |> String.concat ""
-
 let advance_code_block (input: string list) =
     let rec aux acc = function
         | [] -> (List.rev acc, [])
@@ -75,7 +64,7 @@ let parse (input: string list) : blockElement list =
             let l = h |> String.lchop ~n:3 |> String.trim in
             let lang = if l = "" then None else Some l in
             let lines, tt = advance_code_block t in
-            let codes = lines |> List.map html_encode |> String.concat "\n" in
+            let codes = lines |> String.concat "\n" in
             let block = Bcode (lang, codes) in
             aux (block :: acc) tt
         | h :: t when String.starts_with h "> " ->
@@ -86,7 +75,7 @@ let parse (input: string list) : blockElement list =
         | h :: t when String.starts_with h "- " ->
             let lines, tt = advance_list_block (h :: t) in
             let list_items = split_list_block lines in
-            let lst = list_items |> List.map parse_list_item in
+            let lst = list_items |> List.map parse_list_item |> List.map List.hd in
             let block = Blist lst in
             aux (block :: acc) tt
         | h :: t ->
