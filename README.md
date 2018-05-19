@@ -1,10 +1,13 @@
-# vfmd
+# md
 
-An implementation of [vfmd](http://www.vfmd.org/) in OCaml
+A markdown renderer in OCaml
 
 ---
 
-## vfmd implements
+```
+$ # build
+$ make
 
-- [C++](https://github.com/vfmd/vfmd-src)
-- [Go](https://github.com/akavel/vfmd)
+$ # usage
+$ ./main.byte README.md
+```
