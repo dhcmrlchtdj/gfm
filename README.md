@@ -1,6 +1,6 @@
-# md
+# mine
 
-A markdown renderer in OCaml
+A markdown renderer in OCaml.
 
 ---
 
