@@ -17,10 +17,10 @@ OCB := ocamlbuild $(OCB_FLAGS)
 mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 
 main: $(mlis)
-	@$(OCB) src/main.byte
+	@$(OCB) src/main.native
 
 test: main
-	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.byte -
+	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.native -
 
 $(mlis):
 	-@$(OCB) $@.inferred.mli

@@ -9,5 +9,5 @@ $ # build
 $ make
 
 $ # usage
-$ ./main.byte README.md
+$ ./main.native README.md
 ```

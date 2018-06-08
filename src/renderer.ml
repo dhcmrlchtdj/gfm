@@ -44,5 +44,10 @@ let html_render (input: md_ast) : string =
     and blocks_to_html (blocks: blockElement list) : string =
         blocks |> List.map block_to_html |> String.concat "\n"
     in
-    let md_to_html (md: md_ast) : string = sprintf "%s\n" (blocks_to_html md) in
+    let md_to_html (md: md_ast) : string = sprintf "%s" (blocks_to_html md) in
     md_to_html input
+
+let gfm_render (input: md_ast) : string =
+    let head = "<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><link rel='stylesheet' href='https://guides.github.com/components/primer/markdown.css'>" in
+    let body = html_render input in
+    Printf.sprintf "<html><head>%s</head><body class='markdown-body'>%s</body></html>" head body
