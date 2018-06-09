@@ -27,10 +27,6 @@ byte: $(mlis)
 native: $(mlis)
 	@$(OCB) src/main.native
 
-.PHONY: jsoo
-jsoo: byte
-	js_of_ocaml --opt=3 --pretty +nat.js ./main.byte
-
 .PHONY: $(mlis)
 $(mlis):
 	-@$(OCB) $@.inferred.mli
