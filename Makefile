@@ -16,16 +16,35 @@ OCB := ocamlbuild $(OCB_FLAGS)
 
 mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 
-main: $(mlis)
+.PHONY: main
+main: native
+
+.PHONY: byte
+byte: $(mlis)
+	@$(OCB) src/main.byte
+
+.PHONY: native
+native: $(mlis)
 	@$(OCB) src/main.native
 
-test: main
-	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.native -
+.PHONY: jsoo
+jsoo: byte
+	js_of_ocaml --opt=3 --pretty +nat.js ./main.byte
 
+.PHONY: $(mlis)
 $(mlis):
 	-@$(OCB) $@.inferred.mli
 
+.PHONY: clean
 clean:
 	@ocamlbuild -clean
+	@rm -f ./main.js
 
-.PHONY: main clean $(mlis) jsoo test
+.PHONY: fmt
+fmt:
+	@ocamlformat -i src/*.ml
+	@ocp-indent -i src/*.ml
+
+.PHONY: test
+test: native
+	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main.native -
