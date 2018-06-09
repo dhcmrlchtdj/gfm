@@ -34,15 +34,15 @@ let html_render (input: md_ast) : string =
             sprintf "<pre><code class=\"language-%s\">%s</code></pre>" (encode l)
                 (encode c)
         | Bcode (None, c) -> sprintf "<pre><code>%s</code></pre>" (encode c)
-        | Bquote b -> sprintf "<blockquote>\n%s\n</blockquote>" (blocks_to_html b)
-        | Blist ul -> sprintf "<ul>\n%s\n</ul>" (listItems_to_html ul)
+        | Bquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
+        | Blist ul -> sprintf "<ul>%s</ul>" (listItems_to_html ul)
         | Bseq s -> sprintf "%s" (spans_to_html s)
     and listItem_to_html (item: blockElement list) =
         sprintf "<li>%s</li>" (blocks_to_html item)
     and listItems_to_html (blocks: blockElement list list) : string =
-        blocks |> List.map listItem_to_html |> String.concat "\n"
+        blocks |> List.map listItem_to_html |> String.concat ""
     and blocks_to_html (blocks: blockElement list) : string =
-        blocks |> List.map block_to_html |> String.concat "\n"
+        blocks |> List.map block_to_html |> String.concat ""
     in
     let md_to_html (md: md_ast) : string = sprintf "%s" (blocks_to_html md) in
     md_to_html input
