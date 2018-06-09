@@ -4,6 +4,7 @@ let () =
     Cli.run (fun input ->
         input
         |> Parser.parse
-        |> Renderer.gfm_render
+        |> Renderer.html_render
+        |> Renderer.with_style
         |> Printf.sprintf "%s\n"
         |> print_string )
