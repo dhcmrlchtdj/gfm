@@ -6,12 +6,12 @@ type token =
     | TstrongU
     | TemphasisA
     | TemphasisU
+    | TsimpleLink of string
     | TimgOpen
     | TlinkOpen
     | TlinkClose of string
-    | TsimpleLink of string
     | Tcode of string
-    | Tchar of char
+    | Tstring of string
 
 type t_n_s = T of token | S of spanElement
 
@@ -30,6 +30,22 @@ let chars_to_tokens (chars: char list) : token list =
     let read_code = read_util '`' in
     let read_link = read_util ')' in
     let read_simple_link = read_util '>' in
+    let concat_string (tokens: token list) : token list =
+        let rec read_string acc = function
+            | Tstring s :: t -> read_string (s :: acc) t
+            | _ as t ->
+                let s = acc |> List.rev |> String.concat "" in
+                (Tstring s, t)
+        in
+        let rec aux acc = function
+            | Tstring s :: t ->
+                let ss, tt = read_string [s] t in
+                aux (ss :: acc) tt
+            | h :: t -> aux (h :: acc) t
+            | [] -> List.rev acc
+        in
+        aux [] tokens
+    in
     let rec aux acc = function
         | [] -> List.rev acc
         | '*' :: '*' :: t -> aux (TstrongA :: acc) t
@@ -39,20 +55,21 @@ let chars_to_tokens (chars: char list) : token list =
         | '`' :: t -> (
                 match read_code t with
                     | Some (code, tt) -> aux (Tcode code :: acc) tt
-                    | None -> aux (Tchar '`' :: acc) t )
+                    | None -> aux (Tstring "`" :: acc) t )
         | '!' :: '[' :: t -> aux (TimgOpen :: acc) t
         | '[' :: t -> aux (TlinkOpen :: acc) t
         | ']' :: '(' :: t -> (
                 match read_link t with
                     | Some (link, tt) -> aux (TlinkClose link :: acc) tt
-                    | None -> aux (Tchar '(' :: Tchar ']' :: acc) t )
+                    | None -> aux (Tstring "(" :: Tstring "]" :: acc) t )
         | '<' :: t -> (
                 match read_simple_link t with
                     | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
-                    | None -> aux (Tchar '<' :: acc) t )
-        | h :: t -> aux (Tchar h :: acc) t
+                    | None -> aux (Tstring "<" :: acc) t )
+        | h :: t -> aux (Tstring (String.of_char h) :: acc) t
     in
-    aux [] chars
+    let r = aux [] chars in
+    concat_string r
 
 let tokens_to_spans (tokens: token list) : spanElement list =
     let sprintf = Printf.sprintf in
@@ -62,12 +79,12 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | TstrongU -> "__"
             | TemphasisA -> "*"
             | TemphasisU -> "_"
+            | TsimpleLink l -> sprintf "<%s>" l
             | TimgOpen -> "!["
             | TlinkOpen -> "["
             | TlinkClose l -> sprintf "](%s" l
-            | TsimpleLink l -> sprintf "<%s>" l
             | Tcode s -> sprintf "`%s`" s
-            | Tchar c -> String.of_char c
+            | Tstring s -> s
         in
         Stext (convert t)
     in
@@ -99,12 +116,6 @@ let tokens_to_spans (tokens: token list) : spanElement list =
         in
         let ss = aux [] spans in
         String.concat "" ss
-    in
-    let rec read_chars acc = function
-        | Tchar c :: t -> read_chars (c :: acc) t
-        | _ as t ->
-            let s = acc |> List.rev |> String.of_list in
-            (s, t)
     in
     let find_open (link: string) acc =
         let rec aux tmp_acc acc =
@@ -141,9 +152,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
         aux [] acc
     in
     let rec aux acc = function
-        | Tchar c :: t ->
-            let s, tt = read_chars [c] t in
-            aux (S (Stext s) :: acc) tt
+        | Tstring s :: t -> aux (S (Stext s) :: acc) t
         | Tcode code :: t -> aux (S (Scode code) :: acc) t
         | TsimpleLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
         | TimgOpen :: t -> aux (T TimgOpen :: acc) t
@@ -152,7 +161,10 @@ let tokens_to_spans (tokens: token list) : spanElement list =
                 match find_open l acc with
                     | Some acc2 -> aux acc2 t
                     | None -> aux (S (to_span h) :: acc) t )
-        | h :: t -> (
+        | (TstrongA as h) :: t
+        |(TstrongU as h) :: t
+        |(TemphasisA as h) :: t
+        |(TemphasisU as h) :: t -> (
                 match find_match h acc with
                     | Some acc2 -> aux acc2 t
                     | None -> aux (T h :: acc) t )
