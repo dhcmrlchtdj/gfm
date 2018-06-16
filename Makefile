@@ -21,17 +21,17 @@ main: native
 
 .PHONY: test
 test: main
-	echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main -
+	@echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main -
 
 .PHONY: byte
 byte: $(mlis)
 	@$(OCB) src/main.byte
-	ln -sf ./main.byte ./main
+	@ln -sf ./main.byte ./main
 
 .PHONY: native
 native: $(mlis)
 	@$(OCB) src/main.native
-	ln -sf ./main.native ./main
+	@ln -sf ./main.native ./main
 
 .PHONY: $(mlis)
 $(mlis):
@@ -40,7 +40,7 @@ $(mlis):
 .PHONY: clean
 clean:
 	@ocamlbuild -clean
-	rm -rf ./main
+	@rm -rf ./main
 
 .PHONY: fmt
 fmt:

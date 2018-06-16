@@ -53,7 +53,9 @@ let with_style (body: string) : string =
         ; "<head>"
         ; "<meta charset='utf-8'>"
         ; "<meta name='viewport' content='width=device-width,initial-scale=1'>"
-        ; "<link rel='stylesheet' href='https://guides.github.com/components/primer/markdown.css'>"
+        ; "<style>"
+        ; GfmStyle.style
+        ; "</style>"
         ; "</head>"
         ; "<body class='markdown-body'>"
         ; body
