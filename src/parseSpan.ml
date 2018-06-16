@@ -9,6 +9,7 @@ type token =
     | TimgOpen
     | TlinkOpen
     | TlinkClose of string
+    | TsimpleLink of string
     | Tcode of string
     | Tchar of char
 
@@ -28,6 +29,7 @@ let chars_to_tokens (chars: char list) : token list =
     in
     let read_code = read_util '`' in
     let read_link = read_util ')' in
+    let read_simple_link = read_util '>' in
     let rec aux acc = function
         | [] -> List.rev acc
         | '*' :: '*' :: t -> aux (TstrongA :: acc) t
@@ -44,6 +46,10 @@ let chars_to_tokens (chars: char list) : token list =
                 match read_link t with
                     | Some (link, tt) -> aux (TlinkClose link :: acc) tt
                     | None -> aux (Tchar '(' :: Tchar ']' :: acc) t )
+        | '<' :: t -> (
+                match read_simple_link t with
+                    | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
+                    | None -> aux (Tchar '<' :: acc) t )
         | h :: t -> aux (Tchar h :: acc) t
     in
     aux [] chars
@@ -59,6 +65,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | TimgOpen -> "!["
             | TlinkOpen -> "["
             | TlinkClose l -> sprintf "](%s" l
+            | TsimpleLink l -> sprintf "<%s>" l
             | Tcode s -> sprintf "`%s`" s
             | Tchar c -> String.of_char c
         in
@@ -138,6 +145,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             let s, tt = read_chars [c] t in
             aux (S (Stext s) :: acc) tt
         | Tcode code :: t -> aux (S (Scode code) :: acc) t
+        | TsimpleLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
         | TimgOpen :: t -> aux (T TimgOpen :: acc) t
         | TlinkOpen :: t -> aux (T TlinkOpen :: acc) t
         | (TlinkClose l as h) :: t -> (
