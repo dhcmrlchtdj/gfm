@@ -11,6 +11,7 @@ OCB_FLAGS := \
 	-use-ocamlfind \
 	-pkg batteries \
 	-pkg re \
+	-pkg alcotest \
 	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 
@@ -20,8 +21,9 @@ mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 main: native
 
 .PHONY: test
-test: main
-	@echo '# header\nThe **`ls` command** [_lists_ files](/ls-cmd).' | ./main -
+test:
+	@$(OCB) src/test.native
+	@./test.native
 
 .PHONY: byte
 byte: $(mlis)
