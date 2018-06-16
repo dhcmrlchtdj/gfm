@@ -9,5 +9,8 @@ $ # build
 $ make
 
 $ # usage
-$ ./main.native README.md
+$ ./main README.md
+
+$ # test
+$ make test
 ```
