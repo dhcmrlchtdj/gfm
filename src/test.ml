@@ -15,7 +15,12 @@ let cases =
     ; ( "<http://foo.bar.baz>"
       , "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>" )
     ; ( "<MAILTO:FOO@BAR.BAZ>"
-      , "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>" ) ]
+      , "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>" )
+    ; ( "http://commonmark.org"
+      , "<p><a href=\"http://commonmark.org\">http://commonmark.org</a></p>" )
+    ; ( "Visit https://encrypted.google.com/search?q=Markup+(business)"
+      , "<p>Visit <a href=\"https://encrypted.google.com/search?q=Markup+(business)\">https://encrypted.google.com/search?q=Markup+(business)</a></p>"
+    ) ]
 
 let build (input, output) =
     ( "test"

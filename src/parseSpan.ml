@@ -1,11 +1,14 @@
 open Batteries
 open Types
 
+let re_url = Regexp.compile "\\bhttps?://\\S+"
+
 type token =
     | TstrongA
     | TstrongU
     | TemphasisA
     | TemphasisU
+    | TautoLink of string
     | TsimpleLink of string
     | TimgOpen
     | TlinkOpen
@@ -14,6 +17,42 @@ type token =
     | Tstring of string
 
 type t_n_s = T of token | S of spanElement
+
+let concat_string (tokens: token list) : token list =
+    let rec read_string acc = function
+        | Tstring s :: t -> read_string (s :: acc) t
+        | _ as t ->
+            let s = acc |> List.rev |> String.concat "" in
+            (Tstring s, t)
+    in
+    let rec aux acc = function
+        | Tstring s :: t ->
+            let ss, tt = read_string [s] t in
+            aux (ss :: acc) tt
+        | h :: t -> aux (h :: acc) t
+        | [] -> List.rev acc
+    in
+    aux [] tokens
+
+let split_link (tokens: token list) : token list =
+    let try_autolink s =
+        let f = function
+            | Regexp.SplitText s -> Tstring s
+            | Regexp.SplitDelim s -> TautoLink s
+        in
+        let matched = Regexp.split_full re_url s in
+        List.map f matched
+    in
+    let rec aux acc = function
+        | Tstring s :: t ->
+            let ss = try_autolink s in
+            let f prev curr = curr :: prev in
+            let acc2 = List.fold_left f acc ss in
+            aux acc2 t
+        | h :: t -> aux (h :: acc) t
+        | [] -> List.rev acc
+    in
+    aux [] tokens
 
 let chars_to_tokens (chars: char list) : token list =
     let read_util (ch: char) (chars: char list) : (string * char list) option =
@@ -30,22 +69,6 @@ let chars_to_tokens (chars: char list) : token list =
     let read_code = read_util '`' in
     let read_link = read_util ')' in
     let read_simple_link = read_util '>' in
-    let concat_string (tokens: token list) : token list =
-        let rec read_string acc = function
-            | Tstring s :: t -> read_string (s :: acc) t
-            | _ as t ->
-                let s = acc |> List.rev |> String.concat "" in
-                (Tstring s, t)
-        in
-        let rec aux acc = function
-            | Tstring s :: t ->
-                let ss, tt = read_string [s] t in
-                aux (ss :: acc) tt
-            | h :: t -> aux (h :: acc) t
-            | [] -> List.rev acc
-        in
-        aux [] tokens
-    in
     let rec aux acc = function
         | [] -> List.rev acc
         | '*' :: '*' :: t -> aux (TstrongA :: acc) t
@@ -61,7 +84,7 @@ let chars_to_tokens (chars: char list) : token list =
         | ']' :: '(' :: t -> (
                 match read_link t with
                     | Some (link, tt) -> aux (TlinkClose link :: acc) tt
-                    | None -> aux (Tstring "(" :: Tstring "]" :: acc) t )
+                    | None -> aux (Tstring "](" :: acc) t )
         | '<' :: t -> (
                 match read_simple_link t with
                     | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
@@ -69,7 +92,7 @@ let chars_to_tokens (chars: char list) : token list =
         | h :: t -> aux (Tstring (String.of_char h) :: acc) t
     in
     let r = aux [] chars in
-    concat_string r
+    r |> concat_string |> split_link
 
 let tokens_to_spans (tokens: token list) : spanElement list =
     let sprintf = Printf.sprintf in
@@ -80,6 +103,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | TemphasisA -> "*"
             | TemphasisU -> "_"
             | TsimpleLink l -> sprintf "<%s>" l
+            | TautoLink l -> l
             | TimgOpen -> "!["
             | TlinkOpen -> "["
             | TlinkClose l -> sprintf "](%s" l
@@ -154,6 +178,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
     let rec aux acc = function
         | Tstring s :: t -> aux (S (Stext s) :: acc) t
         | Tcode code :: t -> aux (S (Scode code) :: acc) t
+        | TautoLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
         | TsimpleLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
         | TimgOpen :: t -> aux (T TimgOpen :: acc) t
         | TlinkOpen :: t -> aux (T TlinkOpen :: acc) t
