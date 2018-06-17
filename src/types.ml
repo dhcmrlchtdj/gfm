@@ -3,6 +3,7 @@ type spanElement =
     | Scode of string
     | Semphasis of spanElement list
     | Sstrong of spanElement list
+    | Sdelete of spanElement list
     | Slink of spanElement list * string
     | Simage of string * string
 

@@ -12,21 +12,24 @@ let cases =
     ; ("*foo bar*", "<p><em>foo bar</em></p>")
     ; ("foo*bar*", "<p>foo<em>bar</em></p>")
     ; ("_foo*", "<p>_foo*</p>")
+    ; ("~~foo~~", "<p><del>foo</del></p>")
+    ; ("**foo**", "<p><strong>foo</strong></p>")
+    ; ("*foo*", "<p><em>foo</em></p>")
     ; ( "<http://foo.bar.baz>"
-      , "<p><a href=\"http://foo.bar.baz\">http://foo.bar.baz</a></p>" )
+      , "<p><a href='http://foo.bar.baz'>http://foo.bar.baz</a></p>" )
     ; ( "<MAILTO:FOO@BAR.BAZ>"
-      , "<p><a href=\"MAILTO:FOO@BAR.BAZ\">MAILTO:FOO@BAR.BAZ</a></p>" )
+      , "<p><a href='MAILTO:FOO@BAR.BAZ'>MAILTO:FOO@BAR.BAZ</a></p>" )
     ; ( "http://commonmark.org"
-      , "<p><a href=\"http://commonmark.org\">http://commonmark.org</a></p>" )
+      , "<p><a href='http://commonmark.org'>http://commonmark.org</a></p>" )
     ; ( "Visit https://encrypted.google.com/search?q=Markup+(business)"
-      , "<p>Visit <a href=\"https://encrypted.google.com/search?q=Markup+(business)\">https://encrypted.google.com/search?q=Markup+(business)</a></p>"
+      , "<p>Visit <a href='https://encrypted.google.com/search?q=Markup+(business)'>https://encrypted.google.com/search?q=Markup+(business)</a></p>"
     ) ]
 
 let build (input, output) =
     ( "test"
     , `Quick
     , fun () ->
-        Alcotest.check Alcotest.string "equal" output
+        Alcotest.check Alcotest.string input output
             (input |> Parser.parse |> Renderer.html_render) )
 
 let () = Alcotest.run "markdown" [("test_set", List.map build cases)]

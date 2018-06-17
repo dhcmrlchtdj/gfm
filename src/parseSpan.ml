@@ -8,6 +8,7 @@ type token =
     | TstrongU
     | TemphasisA
     | TemphasisU
+    | Tdelete
     | TautoLink of string
     | TsimpleLink of string
     | TimgOpen
@@ -71,6 +72,7 @@ let chars_to_tokens (chars: char list) : token list =
     let read_simple_link = read_util '>' in
     let rec aux acc = function
         | [] -> List.rev acc
+        | '~' :: '~' :: t -> aux (Tdelete :: acc) t
         | '*' :: '*' :: t -> aux (TstrongA :: acc) t
         | '_' :: '_' :: t -> aux (TstrongU :: acc) t
         | '*' :: t -> aux (TemphasisA :: acc) t
@@ -98,6 +100,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
     let sprintf = Printf.sprintf in
     let to_span (t: token) =
         let convert = function
+            | Tdelete -> "~~"
             | TstrongA -> "**"
             | TstrongU -> "__"
             | TemphasisA -> "*"
@@ -130,6 +133,9 @@ let tokens_to_spans (tokens: token list) : spanElement list =
             | Semphasis s :: t ->
                 let ss = sprintf "*%s*" (to_text s) in
                 aux (ss :: acc) t
+            | Sdelete s :: t ->
+                let ss = sprintf "~~%s~~" (to_text s) in
+                aux (ss :: acc) t
             | Slink (text, url) :: t ->
                 let ss = sprintf "[%s](%s)" (to_text text) url in
                 aux (ss :: acc) t
@@ -160,16 +166,16 @@ let tokens_to_spans (tokens: token list) : spanElement list =
     let find_match (tok: token) acc =
         let rec aux tmp_acc acc =
             match acc with
-                | T x :: t when x = tok ->
-                    if x = TstrongA || x = TstrongU
-                    then
-                        let s = S (Sstrong (to_spans tmp_acc)) in
-                        Some (s :: t)
-                    else if x = TemphasisA || x = TemphasisU
-                    then
-                        let s = S (Semphasis (to_spans tmp_acc)) in
-                        Some (s :: t)
-                    else None
+                | (T (TstrongA as x) :: t | T (TstrongU as x) :: t) when x = tok ->
+                    let s = S (Sstrong (to_spans tmp_acc)) in
+                    Some (s :: t)
+                | (T (TemphasisA as x) :: t | T (TemphasisU as x) :: t) when x = tok ->
+                    let s = S (Semphasis (to_spans tmp_acc)) in
+                    Some (s :: t)
+                | T Tdelete :: t when tok = Tdelete ->
+                    let s = S (Sdelete (to_spans tmp_acc)) in
+                    Some (s :: t)
+                | T x :: _ when x = tok -> None
                 | h :: t -> aux (h :: tmp_acc) t
                 | [] -> None
         in
@@ -186,7 +192,8 @@ let tokens_to_spans (tokens: token list) : spanElement list =
                 match find_open l acc with
                     | Some acc2 -> aux acc2 t
                     | None -> aux (S (to_span h) :: acc) t )
-        | (TstrongA as h) :: t
+        | (Tdelete as h) :: t
+        |(TstrongA as h) :: t
         |(TstrongU as h) :: t
         |(TemphasisA as h) :: t
         |(TemphasisU as h) :: t -> (

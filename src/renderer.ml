@@ -16,11 +16,12 @@ let html_render (input: md_ast) : string =
     let sprintf = Printf.sprintf in
     let rec span_to_html : spanElement -> string = function
         | Slink (text, url) ->
-            sprintf "<a href=\"%s\">%s</a>" url (spans_to_html text)
+            sprintf "<a href='%s'>%s</a>" (encode url) (spans_to_html text)
         | Simage (alt, url) ->
-            sprintf "<img src=\"%s\" alt=\"%s\">" url (encode alt)
+            sprintf "<img src='%s' alt='%s'>" (encode url) (encode alt)
         | Sstrong t -> sprintf "<strong>%s</strong>" (spans_to_html t)
         | Semphasis t -> sprintf "<em>%s</em>" (spans_to_html t)
+        | Sdelete t -> sprintf "<del>%s</del>" (spans_to_html t)
         | Scode t -> sprintf "<code>%s</code>" (encode t)
         | Stext t -> sprintf "%s" (encode t)
     and spans_to_html (spans: spanElement list) : string =
@@ -31,7 +32,7 @@ let html_render (input: md_ast) : string =
         | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
         | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
         | Bcode (Some l, c) ->
-            sprintf "<pre><code class=\"language-%s\">%s</code></pre>" (encode l)
+            sprintf "<pre><code class='language-%s'>%s</code></pre>" (encode l)
                 (encode c)
         | Bcode (None, c) -> sprintf "<pre><code>%s</code></pre>" (encode c)
         | Bquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
