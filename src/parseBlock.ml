@@ -17,7 +17,7 @@ let advance_code_block (input: string list) =
 let advance_quote_block (input: string list) =
     let rec aux acc = function
         | h :: t when String.starts_with h "> " ->
-            let line = String.lchop ~n:2 h in
+            let line = String.tail h 2 in
             aux (line :: acc) t
         | [] -> (List.rev acc, [])
         | _ as t -> (List.rev acc, t)
@@ -69,7 +69,7 @@ let parse (input: string list) : blockElement list =
             in
             aux (block :: acc) t
         | h :: t when String.starts_with h "```" ->
-            let l = h |> String.lchop ~n:3 |> String.trim in
+            let l = String.tail h 3 |> String.trim in
             let lang = if l = "" then None else Some l in
             let lines, tt = advance_code_block t in
             let codes = lines |> String.concat "\n" in
@@ -92,12 +92,12 @@ let parse (input: string list) : blockElement list =
         match input with
             | [] -> failwith "parse_list_item"
             | [h] ->
-                let line = String.lchop ~n:2 h in
+                let line = String.tail h 2 in
                 [Bseq (ParseSpan.parse line)]
             | h :: t ->
-                let hh = String.lchop ~n:2 h in
+                let hh = String.tail h 2 in
                 let hhh = Bseq (ParseSpan.parse hh) in
-                let tt = List.map (fun l -> String.lchop ~n:4 l) t in
+                let tt = List.map (fun l -> String.tail l 4) t in
                 let ttt = aux [] tt in
                 hhh :: ttt
     in

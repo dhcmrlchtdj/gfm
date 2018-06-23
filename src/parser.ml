@@ -2,7 +2,7 @@ open Batteries
 
 let trim_bom (input: string) : string =
     if String.starts_with input "\239\187\191"
-    then String.sub input 3 (String.length input - 3)
+    then String.tail input 3
     else input
 
 let replace_crlf (input: string) : string =
