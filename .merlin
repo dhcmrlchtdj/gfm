@@ -9,7 +9,6 @@ FLG -keep-locs
 FLG -keep-docs
 FLG -principal
 FLG -bin-annot
-FLG -thread
 FLG -nopervasives
 FLG -w +a-4
 

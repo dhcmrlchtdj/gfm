@@ -25,11 +25,6 @@ test:
 	@$(OCB) src/test.native
 	@./test.native
 
-.PHONY: byte
-byte: $(mlis)
-	@$(OCB) src/main.byte
-	@ln -sf ./main.byte ./main
-
 .PHONY: native
 native: $(mlis)
 	@$(OCB) src/main.native
