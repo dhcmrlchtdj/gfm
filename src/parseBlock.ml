@@ -6,7 +6,7 @@ let re_heading = Regexp.compile "^(#+)\\s*(.*)$"
 
 let re_list_prefix = Regexp.compile "^(    )*- "
 
-let advance_code_block (input: string list) =
+let advance_code_block (input : string list) =
     let rec aux acc = function
         | [] -> (List.rev acc, [])
         | "```" :: t -> (List.rev acc, t)
@@ -14,7 +14,8 @@ let advance_code_block (input: string list) =
     in
     aux [] input
 
-let advance_quote_block (input: string list) =
+
+let advance_quote_block (input : string list) =
     let rec aux acc = function
         | h :: t when String.starts_with h "> " ->
             let line = String.tail h 2 in
@@ -24,8 +25,9 @@ let advance_quote_block (input: string list) =
     in
     aux [] input
 
-let advance_list_block (input: string list) =
-    let read_block (input: string list) : string list * string list =
+
+let advance_list_block (input : string list) =
+    let read_block (input : string list) : string list * string list =
         let rec aux acc = function
             | h :: t when re_list_prefix =~ h -> aux (h :: acc) t
             | [] -> (List.rev acc, [])
@@ -33,16 +35,16 @@ let advance_list_block (input: string list) =
         in
         aux [] input
     in
-    let split_block (input: string list) : string list list =
+    let split_block (input : string list) : string list list =
         let rec aux acc curr = function
-            | [] -> (
-                    match curr with
-                        | [] -> List.rev acc
-                        | _ -> List.rev (List.rev curr :: acc) )
-            | h :: t when String.starts_with h "- " -> (
-                    match curr with
-                        | [] -> aux acc [h] t
-                        | _ -> aux (List.rev curr :: acc) [h] t )
+            | [] ->
+                (match curr with
+                    | [] -> List.rev acc
+                    | _ -> List.rev (List.rev curr :: acc))
+            | h :: t when String.starts_with h "- " ->
+                (match curr with
+                    | [] -> aux acc [h] t
+                    | _ -> aux (List.rev curr :: acc) [h] t)
             | h :: t -> aux acc (h :: curr) t
         in
         aux [] [] input
@@ -51,7 +53,8 @@ let advance_list_block (input: string list) =
     let list_items = split_block block in
     (list_items, tt)
 
-let parse (input: string list) : blockElement list =
+
+let parse (input : string list) : blockElement list =
     let rec aux acc = function
         | [] -> List.rev acc
         | "" :: t -> aux acc t
@@ -88,7 +91,7 @@ let parse (input: string list) : blockElement list =
         | h :: t ->
             let block = Bparagraph (ParseSpan.parse h) in
             aux (block :: acc) t
-    and parse_list_item (input: string list) : blockElement list =
+    and parse_list_item (input : string list) : blockElement list =
         match input with
             | [] -> failwith "parse_list_item"
             | [h] ->

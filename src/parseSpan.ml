@@ -19,7 +19,7 @@ type token =
 
 type t_n_s = T of token | S of spanElement
 
-let concat_string (tokens: token list) : token list =
+let concat_string (tokens : token list) : token list =
     let rec read_string acc = function
         | Tstring s :: t -> read_string (s :: acc) t
         | _ as t ->
@@ -35,7 +35,8 @@ let concat_string (tokens: token list) : token list =
     in
     aux [] tokens
 
-let split_link (tokens: token list) : token list =
+
+let split_link (tokens : token list) : token list =
     let try_autolink s =
         let f = function
             | Regexp.SplitText s -> Tstring s
@@ -55,8 +56,9 @@ let split_link (tokens: token list) : token list =
     in
     aux [] tokens
 
-let chars_to_tokens (chars: char list) : token list =
-    let read_util (ch: char) (chars: char list) : (string * char list) option =
+
+let chars_to_tokens (chars : char list) : token list =
+    let read_util (ch : char) (chars : char list) : (string * char list) option =
         let rec aux acc = function
             | '\\' :: h :: t when h = ch -> aux (ch :: '\\' :: acc) t
             | h :: t when h = ch ->
@@ -77,28 +79,29 @@ let chars_to_tokens (chars: char list) : token list =
         | '_' :: '_' :: t -> aux (TstrongU :: acc) t
         | '*' :: t -> aux (TemphasisA :: acc) t
         | '_' :: t -> aux (TemphasisU :: acc) t
-        | '`' :: t -> (
-                match read_code t with
-                    | Some (code, tt) -> aux (Tcode code :: acc) tt
-                    | None -> aux (Tstring "`" :: acc) t )
+        | '`' :: t ->
+            (match read_code t with
+                | Some (code, tt) -> aux (Tcode code :: acc) tt
+                | None -> aux (Tstring "`" :: acc) t)
         | '!' :: '[' :: t -> aux (TimgOpen :: acc) t
         | '[' :: t -> aux (TlinkOpen :: acc) t
-        | ']' :: '(' :: t -> (
-                match read_link t with
-                    | Some (link, tt) -> aux (TlinkClose link :: acc) tt
-                    | None -> aux (Tstring "](" :: acc) t )
-        | '<' :: t -> (
-                match read_simple_link t with
-                    | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
-                    | None -> aux (Tstring "<" :: acc) t )
+        | ']' :: '(' :: t ->
+            (match read_link t with
+                | Some (link, tt) -> aux (TlinkClose link :: acc) tt
+                | None -> aux (Tstring "](" :: acc) t)
+        | '<' :: t ->
+            (match read_simple_link t with
+                | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
+                | None -> aux (Tstring "<" :: acc) t)
         | h :: t -> aux (Tstring (String.of_char h) :: acc) t
     in
     let r = aux [] chars in
     r |> concat_string |> split_link
 
-let tokens_to_spans (tokens: token list) : spanElement list =
+
+let tokens_to_spans (tokens : token list) : spanElement list =
     let sprintf = Printf.sprintf in
-    let to_span (t: token) =
+    let to_span (t : token) =
         let convert = function
             | Tdelete -> "~~"
             | TstrongA -> "**"
@@ -147,7 +150,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
         let ss = aux [] spans in
         String.concat "" ss
     in
-    let find_open (link: string) acc =
+    let find_open (link : string) acc =
         let rec aux tmp_acc acc =
             match acc with
                 | T TimgOpen :: t ->
@@ -163,7 +166,7 @@ let tokens_to_spans (tokens: token list) : spanElement list =
         in
         aux [] acc
     in
-    let find_match (tok: token) acc =
+    let find_match (tok : token) acc =
         let rec aux tmp_acc acc =
             match acc with
                 | (T (TstrongA as x) :: t | T (TstrongU as x) :: t) when x = tok ->
@@ -188,21 +191,22 @@ let tokens_to_spans (tokens: token list) : spanElement list =
         | TsimpleLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
         | TimgOpen :: t -> aux (T TimgOpen :: acc) t
         | TlinkOpen :: t -> aux (T TlinkOpen :: acc) t
-        | (TlinkClose l as h) :: t -> (
-                match find_open l acc with
-                    | Some acc2 -> aux acc2 t
-                    | None -> aux (S (to_span h) :: acc) t )
+        | (TlinkClose l as h) :: t ->
+            (match find_open l acc with
+                | Some acc2 -> aux acc2 t
+                | None -> aux (S (to_span h) :: acc) t)
         | (Tdelete as h) :: t
         |(TstrongA as h) :: t
         |(TstrongU as h) :: t
         |(TemphasisA as h) :: t
-        |(TemphasisU as h) :: t -> (
-                match find_match h acc with
-                    | Some acc2 -> aux acc2 t
-                    | None -> aux (T h :: acc) t )
+        |(TemphasisU as h) :: t ->
+            (match find_match h acc with
+                | Some acc2 -> aux acc2 t
+                | None -> aux (T h :: acc) t)
         | [] -> to_spans (List.rev acc)
     in
     aux [] tokens
 
-let parse (text: string) : spanElement list =
+
+let parse (text : string) : spanElement list =
     text |> String.to_list |> chars_to_tokens |> tokens_to_spans
