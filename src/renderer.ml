@@ -1,4 +1,3 @@
-open Batteries
 open Types
 
 let encode (s : string) : string =
@@ -8,9 +7,9 @@ let encode (s : string) : string =
         | '&' -> "&amp;"
         | '"' -> "&quot;"
         | '\'' -> "&#x27;"
-        | c -> String.of_char c
+        | c -> CCString.of_char c
     in
-    s |> String.to_list |> List.map f |> String.concat ""
+    s |> CCString.to_list |> List.map f |> String.concat ""
 
 
 let html_render (input : md_ast) : string =
@@ -71,4 +70,4 @@ let with_style (body : string) : string =
         ; "</body>"
         ; "</html>" ]
     in
-  String.concat "" elements
+    String.concat "" elements

@@ -1,4 +1,3 @@
-open Batteries
 open Types
 
 let re_url = Regexp.compile "\\bhttps?://\\S+"
@@ -62,7 +61,7 @@ let chars_to_tokens (chars : char list) : token list =
         let rec aux acc = function
             | '\\' :: h :: t when h = ch -> aux (ch :: '\\' :: acc) t
             | h :: t when h = ch ->
-                let s = acc |> List.rev |> String.of_list in
+                let s = acc |> List.rev |> CCString.of_list in
                 Some (s, t)
             | h :: t -> aux (h :: acc) t
             | [] -> None
@@ -93,7 +92,7 @@ let chars_to_tokens (chars : char list) : token list =
             (match read_simple_link t with
                 | Some (link, tt) -> aux (TsimpleLink link :: acc) tt
                 | None -> aux (Tstring "<" :: acc) t)
-        | h :: t -> aux (Tstring (String.of_char h) :: acc) t
+        | h :: t -> aux (Tstring (CCString.of_char h) :: acc) t
     in
     let r = aux [] chars in
     r |> concat_string |> split_link
@@ -209,4 +208,4 @@ let tokens_to_spans (tokens : token list) : spanElement list =
 
 
 let parse (text : string) : spanElement list =
-    text |> String.to_list |> chars_to_tokens |> tokens_to_spans
+    text |> CCString.to_list |> chars_to_tokens |> tokens_to_spans

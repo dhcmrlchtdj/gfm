@@ -7,9 +7,8 @@ OCB_FLAGS := \
 	-tag keep_docs \
 	-tag bin_annot \
 	-tag principal \
-	-tag nopervasives \
 	-use-ocamlfind \
-	-pkg batteries \
+	-pkg containers \
 	-pkg re \
 	-pkg alcotest \
 	-tags 'warn(+a-4),warn_error(-a+31)'

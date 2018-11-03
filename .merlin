@@ -9,9 +9,8 @@ FLG -keep-locs
 FLG -keep-docs
 FLG -principal
 FLG -bin-annot
-FLG -nopervasives
 FLG -w +a-4
 
-PKG batteries
-PKG re
 PKG alcotest
+PKG re
+PKG containers

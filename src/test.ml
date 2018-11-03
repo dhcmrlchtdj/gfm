@@ -1,5 +1,3 @@
-open Batteries
-
 let cases =
     [ ("`hi`lo`", "<p><code>hi</code>lo`</p>")
     ; ("`foo`", "<p><code>foo</code></p>")
