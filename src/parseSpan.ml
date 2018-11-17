@@ -1,8 +1,6 @@
 open Containers
 open Types
 
-let ( = ) = Pervasives.( = )
-
 let re_url = Regexp.compile "\\bhttps?://\\S+"
 
 type token =
@@ -18,6 +16,7 @@ type token =
     | TlinkClose of string
     | Tcode of string
     | Tstring of string
+[@@deriving eq]
 
 type t_n_s =
     | T of token
@@ -64,8 +63,8 @@ let split_link (tokens : token list) : token list =
 let chars_to_tokens (chars : char list) : token list =
     let read_util (ch : char) (chars : char list) : (string * char list) option =
         let rec aux acc = function
-            | '\\' :: h :: t when h = ch -> aux (ch :: '\\' :: acc) t
-            | h :: t when h = ch ->
+            | '\\' :: h :: t when Char.equal h ch -> aux (ch :: '\\' :: acc) t
+            | h :: t when Char.equal h ch ->
                 let s = acc |> List.rev |> String.of_list in
                 Some (s, t)
             | h :: t -> aux (h :: acc) t
@@ -173,16 +172,18 @@ let tokens_to_spans (tokens : token list) : spanElement list =
     let find_match (tok : token) acc =
         let rec aux tmp_acc acc =
             match acc with
-                | (T (TstrongA as x) :: t | T (TstrongU as x) :: t) when x = tok ->
+                | (T (TstrongA as x) :: t | T (TstrongU as x) :: t)
+                    when equal_token x tok ->
                     let s = S (Sstrong (to_spans tmp_acc)) in
                     Some (s :: t)
-                | (T (TemphasisA as x) :: t | T (TemphasisU as x) :: t) when x = tok ->
+                | (T (TemphasisA as x) :: t | T (TemphasisU as x) :: t)
+                    when equal_token x tok ->
                     let s = S (Semphasis (to_spans tmp_acc)) in
                     Some (s :: t)
-                | T Tdelete :: t when tok = Tdelete ->
+                | T Tdelete :: t when equal_token tok Tdelete ->
                     let s = S (Sdelete (to_spans tmp_acc)) in
                     Some (s :: t)
-                | T x :: _ when x = tok -> None
+                | T x :: _ when equal_token x tok -> None
                 | h :: t -> aux (h :: tmp_acc) t
                 | [] -> None
         in

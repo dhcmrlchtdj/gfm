@@ -14,3 +14,4 @@ FLG -w +a-4-44
 PKG alcotest
 PKG re
 PKG containers
+PKG ppx_deriving.std
