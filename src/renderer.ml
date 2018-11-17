@@ -29,6 +29,7 @@ let html_render (input : md_ast) : string =
         spans |> List.map span_to_html |> String.concat ""
     in
     let rec block_to_html : blockElement -> string = function
+        | Bnewline -> "<br/>"
         | Bline -> "<hr/>"
         | Bheading (i, t) -> sprintf "<h%d>%s</h%d>" i (spans_to_html t) i
         | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)

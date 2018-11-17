@@ -8,6 +8,7 @@ type spanElement =
     | Simage of string * string
 
 and blockElement =
+    | Bnewline
     | Bline
     | Bcode of string option * string
     | Bheading of int * spanElement list
