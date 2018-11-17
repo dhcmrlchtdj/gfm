@@ -1,3 +1,4 @@
+open Containers
 open Regexp.Infix
 open Types
 
@@ -16,8 +17,8 @@ let advance_code_block (input : string list) =
 
 let advance_quote_block (input : string list) =
     let rec aux acc = function
-        | h :: t when CCString.prefix ~pre:"> " h ->
-            let line = CCString.drop 2 h in
+        | h :: t when String.prefix ~pre:"> " h ->
+            let line = String.drop 2 h in
             aux (line :: acc) t
         | [] -> (List.rev acc, [])
         | _ as t -> (List.rev acc, t)
@@ -40,7 +41,7 @@ let advance_list_block (input : string list) =
                 (match curr with
                     | [] -> List.rev acc
                     | _ -> List.rev (List.rev curr :: acc))
-            | h :: t when CCString.prefix ~pre:"- " h ->
+            | h :: t when String.prefix ~pre:"- " h ->
                 (match curr with
                     | [] -> aux acc [h] t
                     | _ -> aux (List.rev curr :: acc) [h] t)
@@ -57,32 +58,32 @@ let parse (input : string list) : blockElement list =
     let rec aux acc = function
         | [] -> List.rev acc
         | "" :: t -> aux acc t
-        | h :: t when CCString.prefix ~pre:"---" h ->
+        | h :: t when String.prefix ~pre:"---" h ->
             let block = Bline in
             aux (block :: acc) t
-        | h :: t when CCString.prefix ~pre:"#" h ->
+        | h :: t when String.prefix ~pre:"#" h ->
             let block =
                 match Regexp.exec re_heading h with
                     | Some [|_; x; y|] ->
-                        let len = CCInt.min 6 (String.length x) in
+                        let len = Int.min 6 (String.length x) in
                         let title = y |> String.trim |> ParseSpan.parse in
                         Bheading (len, title)
                     | _ -> failwith "never"
             in
             aux (block :: acc) t
-        | h :: t when CCString.prefix ~pre:"```" h ->
-            let l = CCString.drop 3 h |> String.trim in
-            let lang = if l = "" then None else Some l in
+        | h :: t when String.prefix ~pre:"```" h ->
+            let l = String.drop 3 h |> String.trim in
+            let lang = match l with "" -> None | _ -> Some l in
             let lines, tt = advance_code_block t in
             let codes = lines |> String.concat "\n" in
             let block = Bcode (lang, codes) in
             aux (block :: acc) tt
-        | h :: t when CCString.prefix ~pre:"> " h ->
+        | h :: t when String.prefix ~pre:"> " h ->
             let lines, tt = advance_quote_block (h :: t) in
             let quote = aux [] lines in
             let block = Bquote quote in
             aux (block :: acc) tt
-        | h :: t when CCString.prefix ~pre:"- " h ->
+        | h :: t when String.prefix ~pre:"- " h ->
             let list_items, tt = advance_list_block (h :: t) in
             let lst = List.map parse_list_item list_items in
             let block = Blist lst in
@@ -94,12 +95,12 @@ let parse (input : string list) : blockElement list =
         match input with
             | [] -> failwith "parse_list_item"
             | [h] ->
-                let line = CCString.drop 2 h in
+                let line = String.drop 2 h in
                 [Bseq (ParseSpan.parse line)]
             | h :: t ->
-                let hh = CCString.drop 2 h in
+                let hh = String.drop 2 h in
                 let hhh = Bseq (ParseSpan.parse hh) in
-                let tt = List.map (CCString.drop 4) t in
+                let tt = List.map (String.drop 4) t in
                 let ttt = aux [] tt in
                 hhh :: ttt
     in

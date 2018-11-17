@@ -21,7 +21,8 @@ let cases =
       , "<p><a href='http://commonmark.org'>http://commonmark.org</a></p>" )
     ; ( "Visit https://encrypted.google.com/search?q=Markup+(business)"
       , "<p>Visit <a href='https://encrypted.google.com/search?q=Markup+(business)'>https://encrypted.google.com/search?q=Markup+(business)</a></p>"
-    ) ]
+    )
+    ; ("p1\n\np2", "<p>p1</p><br/><p>p2</p>") ]
 
 
 let build (input, output) =

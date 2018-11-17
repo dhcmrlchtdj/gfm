@@ -1,3 +1,4 @@
+open Containers
 open Types
 
 let encode (s : string) : string =
@@ -7,9 +8,9 @@ let encode (s : string) : string =
         | '&' -> "&amp;"
         | '"' -> "&quot;"
         | '\'' -> "&#x27;"
-        | c -> CCString.of_char c
+        | c -> String.of_char c
     in
-    s |> CCString.to_list |> List.map f |> String.concat ""
+    s |> String.to_list |> List.map f |> String.concat ""
 
 
 let html_render (input : md_ast) : string =
@@ -18,7 +19,7 @@ let html_render (input : md_ast) : string =
         | Slink (text, url) ->
             sprintf "<a href='%s'>%s</a>" (encode url) (spans_to_html text)
         | Simage (alt, url) ->
-            sprintf "<img src='%s' alt='%s'>" (encode url) (encode alt)
+            sprintf "<img src='%s' alt='%s'/>" (encode url) (encode alt)
         | Sstrong t -> sprintf "<strong>%s</strong>" (spans_to_html t)
         | Semphasis t -> sprintf "<em>%s</em>" (spans_to_html t)
         | Sdelete t -> sprintf "<del>%s</del>" (spans_to_html t)
@@ -59,8 +60,8 @@ let with_style (body : string) : string =
     let elements =
         [ "<html>"
         ; "<head>"
-        ; "<meta charset='utf-8'>"
-        ; "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        ; "<meta charset='utf-8'/>"
+        ; "<meta name='viewport' content='width=device-width,initial-scale=1'/>"
         ; "<style>"
         ; gfm_style
         ; "</style>"
