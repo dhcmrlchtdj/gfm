@@ -8,7 +8,9 @@ let exec (re : Re.re) (str : string) : string array option =
     Re.exec_opt re str |> CCOpt.map Re.Group.all
 
 
-type split_text = SplitText of string | SplitDelim of string
+type split_text =
+    | SplitText of string
+    | SplitDelim of string
 
 let token_to_str : Re.split_token list -> split_text list =
     List.map (function

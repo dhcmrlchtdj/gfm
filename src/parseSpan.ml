@@ -16,7 +16,9 @@ type token =
     | Tcode of string
     | Tstring of string
 
-type t_n_s = T of token | S of spanElement
+type t_n_s =
+    | T of token
+    | S of spanElement
 
 let concat_string (tokens : token list) : token list =
     let rec read_string acc = function
