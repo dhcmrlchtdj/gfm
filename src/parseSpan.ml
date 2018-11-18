@@ -25,7 +25,7 @@ type t_n_s =
 let concat_string (tokens : token list) : token list =
     let rec read_string acc = function
         | Tstring s :: t -> read_string (s :: acc) t
-        | _ as t ->
+        | t ->
             let s = acc |> List.rev |> String.concat "" in
             (Tstring s, t)
     in
@@ -63,7 +63,7 @@ let split_link (tokens : token list) : token list =
 let chars_to_tokens (chars : char list) : token list =
     let read_util (ch : char) (chars : char list) : (string * char list) option =
         let rec aux acc = function
-            | '\\' :: h :: t when Char.equal h ch -> aux (ch :: '\\' :: acc) t
+            | '\\' :: h :: t -> aux (h :: '\\' :: acc) t
             | h :: t when Char.equal h ch ->
                 let s = acc |> List.rev |> String.of_list in
                 Some (s, t)
@@ -104,23 +104,21 @@ let chars_to_tokens (chars : char list) : token list =
 
 let tokens_to_spans (tokens : token list) : spanElement list =
     let sprintf = Printf.sprintf in
-    let to_span (t : token) =
-        let convert = function
-            | Tdelete -> "~~"
-            | TstrongA -> "**"
-            | TstrongU -> "__"
-            | TemphasisA -> "*"
-            | TemphasisU -> "_"
-            | TsimpleLink l -> sprintf "<%s>" l
-            | TautoLink l -> l
-            | TimgOpen -> "!["
-            | TlinkOpen -> "["
-            | TlinkClose l -> sprintf "](%s" l
-            | Tcode s -> sprintf "`%s`" s
-            | Tstring s -> s
-        in
-        Stext (convert t)
+    let convert = function
+        | Tdelete -> "~~"
+        | TstrongA -> "**"
+        | TstrongU -> "__"
+        | TemphasisA -> "*"
+        | TemphasisU -> "_"
+        | TsimpleLink l -> sprintf "<%s>" l
+        | TautoLink l -> l
+        | TimgOpen -> "!["
+        | TlinkOpen -> "["
+        | TlinkClose l -> sprintf "](%s" l
+        | Tcode s -> sprintf "`%s`" s
+        | Tstring s -> s
     in
+    let to_span (t : token) = Stext (convert t) in
     let to_spans tnss =
         let rec aux acc = function
             | S s :: t -> aux (s :: acc) t
