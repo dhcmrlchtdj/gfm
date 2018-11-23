@@ -1,4 +1,4 @@
-open Containers
+open! Containers
 open Regexp.Infix
 open Types
 

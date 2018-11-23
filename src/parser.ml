@@ -1,4 +1,4 @@
-open Containers
+open! Containers
 
 let trim_bom (input : string) : string =
     if String.prefix ~pre:"\239\187\191" input

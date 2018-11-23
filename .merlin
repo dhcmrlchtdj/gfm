@@ -9,7 +9,7 @@ FLG -keep-locs
 FLG -keep-docs
 FLG -principal
 FLG -bin-annot
-FLG -w +a-4-44
+FLG -w +a-4
 
 PKG alcotest
 PKG re

@@ -1,4 +1,4 @@
-open Containers
+open! Containers
 open Types
 
 let re_url = Regexp.compile "\\bhttps?://\\S+"

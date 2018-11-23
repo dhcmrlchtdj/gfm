@@ -1,4 +1,4 @@
-open Containers
+open! Containers
 open Types
 
 let encode (s : string) : string =

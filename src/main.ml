@@ -1,4 +1,4 @@
-open Containers
+open! Containers
 
 let run callback =
     let exe = Sys.argv.(0) in

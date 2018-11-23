@@ -12,7 +12,7 @@ OCB_FLAGS := \
 	-pkg re \
 	-pkg alcotest \
 	-pkg ppx_deriving.std \
-	-tags 'warn(+a-4-44),warn_error(-a+31)'
+	-tags 'warn(+a-4),warn_error(-a+31)'
 OCB := ocamlbuild $(OCB_FLAGS)
 
 mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
