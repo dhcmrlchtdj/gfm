@@ -1,12 +1,14 @@
 opam-version: "2.0"
 
-name: "mine"
 version: "1.0"
+name: "mine"
+synopsis: "A markdown renderer in OCaml"
 homepage: "https://github.com/dhcmrlchtdj/mine"
 bug-reports: "https://github.com/dhcmrlchtdj/mine/issues"
+license: "UNLICENSE"
 
-authors: "h11"
-maintainer: "nirisix@gmail.com"
+authors: "h11 <nirisix@gmail.com>"
+maintainer: "h11 <nirisix@gmail.com>"
 dev-repo: "git+https://github.com/dhcmrlchtdj/mine"
 
 depends: [
@@ -17,6 +19,7 @@ depends: [
     "alcotest" {dev}
     "ocamlformat" {dev}
     "ocp-indent" {dev}
+    "opam-lock" {dev}
 ]
 
 build: [
