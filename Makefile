@@ -1,43 +1,25 @@
-OCB_FLAGS := \
-	-tag 'color(always)' \
-	-tag safe_string \
-	-tag short_paths \
-	-tag strict_sequence \
-	-tag keep_locs \
-	-tag keep_docs \
-	-tag bin_annot \
-	-tag principal \
-	-use-ocamlfind \
-	-pkg containers \
-	-pkg re \
-	-pkg alcotest \
-	-pkg ppx_deriving.std \
-	-tags 'warn(+a-4),warn_error(-a+31)'
-OCB := ocamlbuild $(OCB_FLAGS)
-
-mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
-
 .PHONY: main
 main: native
 
 .PHONY: test
 test:
-	@$(OCB) src/test.native
-	@./test.native
+	@ ocamlbuild -use-ocamlfind src/test.native
+	@ ./test.native
 
 .PHONY: native
 native: $(mlis)
-	@$(OCB) src/main.native
-	@ln -sf ./main.native ./main
+	@ ocamlbuild -use-ocamlfind src/main.native
+	@ ln -sf ./main.native ./main
 
+mlis := $(patsubst %.ml,%,$(wildcard src/*.ml))
 .PHONY: $(mlis)
 $(mlis):
-	-@$(OCB) $@.inferred.mli
+	-@ ocamlbuild -use-ocamlfind $@.inferred.mli
 
 .PHONY: clean
 clean:
-	@ocamlbuild -clean
-	@rm -rf ./main
+	@ ocamlbuild -clean
+	@ rm -rf ./main
 
 .PHONY: fmt
 fmt:
