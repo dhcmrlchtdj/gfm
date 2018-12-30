@@ -1,3 +1,17 @@
-true: safe_string, short_paths, strict_sequence, keep_locs, keep_docs, bin_annot, principal
-true: color(always), warn(+a-4), warn_error(-a+31)
-true: package(containers), package(ppx_deriving.std), package(re), package(alcotest)
+true: safe_string
+true: short_paths
+true: strict_sequence
+true: keep_locs
+true: keep_docs
+true: bin_annot
+true: principal
+
+true: color(always)
+
+true: warn(+a-4)
+true: warn_error(-a+31)
+
+true: package(containers)
+true: package(ppx_deriving.std)
+true: package(re)
+true: package(alcotest)

@@ -19,7 +19,6 @@ depends: [
     "alcotest" {dev}
     "ocamlformat" {dev}
     "ocp-indent" {dev}
-    "opam-lock" {dev}
 ]
 
 build: [
