@@ -57,10 +57,9 @@ let advance_list_block (input : string list) =
 let parse (input : string list) : blockElement list =
     let rec aux acc = function
         | [] -> List.rev acc
-        | "" :: ("" :: _ as t) ->
+        | "" :: t ->
             let block = Bnewline in
             aux (block :: acc) t
-        | "" :: t -> aux acc t
         | h :: t when String.prefix ~pre:"---" h ->
             let block = Bline in
             aux (block :: acc) t
