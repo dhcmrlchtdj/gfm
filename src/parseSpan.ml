@@ -31,7 +31,7 @@ let concat_string (tokens : token list) : token list =
     in
     let rec aux acc = function
         | Tstring s :: t ->
-            let ss, tt = read_string [s] t in
+            let (ss, tt) = read_string [ s ] t in
             aux (ss :: acc) tt
         | h :: t -> aux (h :: acc) t
         | [] -> List.rev acc
@@ -190,8 +190,8 @@ let tokens_to_spans (tokens : token list) : spanElement list =
     let rec aux acc = function
         | Tstring s :: t -> aux (S (Stext s) :: acc) t
         | Tcode code :: t -> aux (S (Scode code) :: acc) t
-        | TautoLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
-        | TsimpleLink l :: t -> aux (S (Slink ([Stext l], l)) :: acc) t
+        | TautoLink l :: t -> aux (S (Slink ([ Stext l ], l)) :: acc) t
+        | TsimpleLink l :: t -> aux (S (Slink ([ Stext l ], l)) :: acc) t
         | TimgOpen :: t -> aux (T TimgOpen :: acc) t
         | TlinkOpen :: t -> aux (T TlinkOpen :: acc) t
         | (TlinkClose l as h) :: t ->

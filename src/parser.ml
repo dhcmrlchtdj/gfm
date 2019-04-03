@@ -12,19 +12,19 @@ let replace_crlf (input : string) : string =
 
 let expand_tab (input : string) : string =
     if String.contains input '\t'
-    then
+    then (
         let f (p, acc) curr =
             if Char.equal curr '\t'
-            then
+            then (
                 let n = 4 - (p mod 4) in
-                (p + n, List.take n [' '; ' '; ' '; ' '] @ acc)
+                (p + n, List.take n [ ' '; ' '; ' '; ' ' ] @ acc))
             else (p + 1, curr :: acc)
         in
         input
         |> String.to_list
         |> List.fold_left f (0, [])
         |> snd
-        |> String.of_list
+        |> String.of_list)
     else input
 
 

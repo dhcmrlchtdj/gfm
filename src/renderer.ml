@@ -59,17 +59,18 @@ let gfm_style =
 
 let with_style (body : string) : string =
     let elements =
-        [ "<html>"
-        ; "<head>"
-        ; "<meta charset='utf-8'/>"
-        ; "<meta name='viewport' content='width=device-width,initial-scale=1'/>"
-        ; "<style>"
-        ; gfm_style
-        ; "</style>"
-        ; "</head>"
-        ; "<body class='markdown-body'>"
-        ; body
-        ; "</body>"
-        ; "</html>" ]
+        [ "<html>";
+          "<head>";
+          "<meta charset='utf-8'/>";
+          "<meta name='viewport' content='width=device-width,initial-scale=1'/>";
+          "<style>";
+          gfm_style;
+          "</style>";
+          "</head>";
+          "<body class='markdown-body'>";
+          body;
+          "</body>";
+          "</html>"
+        ]
     in
     String.concat "" elements
