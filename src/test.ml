@@ -1,5 +1,6 @@
 let cases =
-    [ ("`hi`lo`", "<p><code>hi</code>lo`</p>");
+    [
+      ("`hi`lo`", "<p><code>hi</code>lo`</p>");
       ("`foo`", "<p><code>foo</code></p>");
       ("`a  b`", "<p><code>a  b</code></p>");
       ("*foo`*`", "<p>*foo<code>*</code></p>");
@@ -22,7 +23,7 @@ let cases =
       ( "Visit https://encrypted.google.com/search?q=Markup+(business)",
         "<p>Visit <a href='https://encrypted.google.com/search?q=Markup+(business)'>https://encrypted.google.com/search?q=Markup+(business)</a></p>"
       );
-      ("p1\n\np2", "<p>p1</p><br/><p>p2</p>")
+      ("p1\n\np2", "<p>p1</p><br/><p>p2</p>");
     ]
 
 
@@ -31,10 +32,10 @@ let build (input, output) =
       `Quick,
       fun () ->
           Alcotest.check
-              Alcotest.string
-              input
-              output
-              (input |> Parser.parse |> Renderer.html_render) )
+            Alcotest.string
+            input
+            output
+            (input |> Parser.parse |> Renderer.html_render) )
 
 
 let () = Alcotest.run "markdown" [ ("test_set", List.map build cases) ]

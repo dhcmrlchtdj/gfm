@@ -37,14 +37,14 @@ let advance_list_block (input : string list) =
     in
     let split_block (input : string list) : string list list =
         let rec aux acc curr = function
-            | [] ->
-                (match curr with
+            | [] -> (
+                match curr with
                     | [] -> List.rev acc
-                    | _ -> List.rev (List.rev curr :: acc))
-            | h :: t when String.prefix ~pre:"- " h ->
-                (match curr with
+                    | _ -> List.rev (List.rev curr :: acc) )
+            | h :: t when String.prefix ~pre:"- " h -> (
+                match curr with
                     | [] -> aux acc [ h ] t
-                    | _ -> aux (List.rev curr :: acc) [ h ] t)
+                    | _ -> aux (List.rev curr :: acc) [ h ] t )
             | h :: t -> aux acc (h :: curr) t
         in
         aux [] [] input
@@ -75,7 +75,11 @@ let parse (input : string list) : blockElement list =
             aux (block :: acc) t
         | h :: t when String.prefix ~pre:"```" h ->
             let l = String.drop 3 h |> String.trim in
-            let lang = match l with "" -> None | _ -> Some l in
+            let lang =
+                match l with
+                    | "" -> None
+                    | _ -> Some l
+            in
             let (lines, tt) = advance_code_block t in
             let codes = lines |> String.concat "\n" in
             let block = Bcode (lang, codes) in

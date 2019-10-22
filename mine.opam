@@ -18,9 +18,8 @@ depends: [
     "ocamlbuild" {build}
     "alcotest" {dev}
     "ocamlformat" {dev}
-    "ocp-indent" {dev}
 ]
 
 build: [
-    [ "make" ]
+    [ "make" "build" ]
 ]

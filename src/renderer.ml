@@ -35,9 +35,9 @@ let html_render (input : md_ast) : string =
         | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
         | Bcode (Some l, c) ->
             sprintf
-                "<pre><code class='language-%s'>%s</code></pre>"
-                (encode l)
-                (encode c)
+              "<pre><code class='language-%s'>%s</code></pre>"
+              (encode l)
+              (encode c)
         | Bcode (None, c) -> sprintf "<pre><code>%s</code></pre>" (encode c)
         | Bquote b -> sprintf "<blockquote>%s</blockquote>" (blocks_to_html b)
         | Blist ul -> sprintf "<ul>%s</ul>" (listItems_to_html ul)
@@ -59,7 +59,8 @@ let gfm_style =
 
 let with_style (body : string) : string =
     let elements =
-        [ "<html>";
+        [
+          "<html>";
           "<head>";
           "<meta charset='utf-8'/>";
           "<meta name='viewport' content='width=device-width,initial-scale=1'/>";
@@ -70,7 +71,7 @@ let with_style (body : string) : string =
           "<body class='markdown-body'>";
           body;
           "</body>";
-          "</html>"
+          "</html>";
         ]
     in
     String.concat "" elements

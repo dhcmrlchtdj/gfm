@@ -17,12 +17,12 @@ type split_text =
 let token_to_str : Re.split_token list -> split_text list =
     List.map (function
         | `Text s -> SplitText s
-        | `Delim d ->
-            (try
-                let s = Re.Group.get d 0 in
-                SplitDelim s
+        | `Delim d -> (
+            try
+              let s = Re.Group.get d 0 in
+              SplitDelim s
             with
-                | Not_found -> SplitText ""))
+                | Not_found -> SplitText "" ))
 
 
 let split_full (re : Re.re) (str : string) : split_text list =
@@ -30,5 +30,5 @@ let split_full (re : Re.re) (str : string) : split_text list =
 
 
 module Infix = struct
-    let ( =~ ) = test
+  let ( =~ ) = test
 end
