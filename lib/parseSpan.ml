@@ -1,5 +1,5 @@
-open! Containers
 open Types
+module String = CCString
 
 let re_url = Regexp.compile "\\bhttps?://\\S+"
 

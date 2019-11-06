@@ -1,6 +1,6 @@
-open! Containers
 open Regexp.Infix
 open Types
+module String = CCString
 
 let re_heading = Regexp.compile "^(#+)\\s*(.*)$"
 
@@ -67,7 +67,7 @@ let parse (input : string list) : blockElement list =
             let block =
                 match Regexp.exec re_heading h with
                     | Some [| _; x; y |] ->
-                        let len = Int.min 6 (String.length x) in
+                        let len = min 6 (String.length x) in
                         let title = y |> String.trim |> ParseSpan.parse in
                         Bheading (len, title)
                     | _ -> failwith "never"

@@ -1,5 +1,3 @@
-open! Containers
-
 let compile (pattern : string) : Re.re =
     pattern |> Re.Perl.re ~opts:[] |> Re.compile
 

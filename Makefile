@@ -1,15 +1,26 @@
-.PHONY: build
-build:
-	dune build @all
+SHELL := /bin/bash
 
-.PHONY: clean
+run: build
+	./_build/default/bin/bin.exe
+
+build:
+	dune build @default
+
+test:
+	dune runtest
+
 clean:
 	dune clean
 
-.PHONY: fmt
 fmt:
-	ocamlformat -i src/*.ml
+	ocamlformat -i */*.ml
 
-.PHONY: install
-install: build
+doc:
+	dune build @doc
+
+install:
+	dune build @install
 	dune install
+
+.PHONY: run build test clean fmt doc
+.PHONY: install

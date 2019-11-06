@@ -5,11 +5,11 @@ A markdown renderer in OCaml.
 ---
 
 ```
-$ # build
-$ make
+$ # install
+$ make install
 
 $ # usage
-$ ./main README.md
+$ mine README.md
 
 $ # test
 $ make test

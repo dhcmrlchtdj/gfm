@@ -1,3 +1,5 @@
+open Mine
+
 let cases =
     [
       ("`hi`lo`", "<p><code>hi</code>lo`</p>");

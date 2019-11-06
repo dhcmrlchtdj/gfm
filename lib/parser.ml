@@ -1,4 +1,4 @@
-open! Containers
+module String = CCString
 
 let trim_bom (input : string) : string =
     if String.prefix ~pre:"\239\187\191" input
@@ -17,7 +17,7 @@ let expand_tab (input : string) : string =
           if Char.equal curr '\t'
           then
             let n = 4 - (p mod 4) in
-            (p + n, List.take n [ ' '; ' '; ' '; ' ' ] @ acc)
+            (p + n, CCList.take n [ ' '; ' '; ' '; ' ' ] @ acc)
           else (p + 1, curr :: acc)
       in
       input

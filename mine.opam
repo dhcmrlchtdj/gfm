@@ -15,7 +15,7 @@ depends: [
     "containers"
     "re"
     "ppx_deriving"
-    "ocamlbuild" {build}
+    "dune" {build}
     "alcotest" {dev}
     "ocamlformat" {dev}
 ]

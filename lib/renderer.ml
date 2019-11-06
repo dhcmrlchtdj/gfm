@@ -1,5 +1,5 @@
-open! Containers
 open Types
+module String = CCString
 
 let encode (s : string) : string =
     let f = function

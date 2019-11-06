@@ -1,4 +1,4 @@
-open! Containers
+open Mine
 
 let run callback =
     let exe = Sys.argv.(0) in
@@ -6,8 +6,8 @@ let run callback =
     let argv = Sys.argv |> Array.to_list |> List.tl in
     let aux = function
         | [ "-h" ] | [ "--help" ] -> usage ()
-        | [ "-" ] -> IO.read_all stdin |> callback
-        | [ file ] -> IO.File.read_exn file |> callback
+        | [ "-" ] -> CCIO.read_all stdin |> callback
+        | [ file ] -> CCIO.File.read_exn file |> callback
         | _ -> usage ()
     in
     aux argv
