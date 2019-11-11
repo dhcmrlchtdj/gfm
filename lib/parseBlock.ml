@@ -14,7 +14,6 @@ let advance_code_block (input : string list) =
     in
     aux [] input
 
-
 let advance_quote_block (input : string list) =
     let rec aux acc = function
         | h :: t when String.prefix ~pre:"> " h ->
@@ -24,7 +23,6 @@ let advance_quote_block (input : string list) =
         | _ as t -> (List.rev acc, t)
     in
     aux [] input
-
 
 let advance_list_block (input : string list) =
     let read_block (input : string list) : string list * string list =
@@ -40,11 +38,13 @@ let advance_list_block (input : string list) =
             | [] -> (
                 match curr with
                     | [] -> List.rev acc
-                    | _ -> List.rev (List.rev curr :: acc) )
+                    | _ -> List.rev (List.rev curr :: acc)
+              )
             | h :: t when String.prefix ~pre:"- " h -> (
                 match curr with
                     | [] -> aux acc [ h ] t
-                    | _ -> aux (List.rev curr :: acc) [ h ] t )
+                    | _ -> aux (List.rev curr :: acc) [ h ] t
+              )
             | h :: t -> aux acc (h :: curr) t
         in
         aux [] [] input
@@ -52,7 +52,6 @@ let advance_list_block (input : string list) =
     let (block, tt) = read_block input in
     let list_items = split_block block in
     (list_items, tt)
-
 
 let parse (input : string list) : blockElement list =
     let rec aux acc = function

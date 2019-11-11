@@ -5,19 +5,18 @@ let trim_bom (input : string) : string =
     then String.drop 3 input
     else input
 
-
 let replace_crlf (input : string) : string =
     String.replace ~which:`All ~sub:"\r\n" ~by:"\n" input
 
-
 let expand_tab (input : string) : string =
     if String.contains input '\t'
-    then
+    then (
       let f (p, acc) curr =
           if Char.equal curr '\t'
-          then
+          then (
             let n = 4 - (p mod 4) in
             (p + n, CCList.take n [ ' '; ' '; ' '; ' ' ] @ acc)
+          )
           else (p + 1, curr :: acc)
       in
       input
@@ -25,8 +24,8 @@ let expand_tab (input : string) : string =
       |> List.fold_left f (0, [])
       |> snd
       |> String.of_list
+    )
     else input
-
 
 let parse (input : string) : Types.md_ast =
     input

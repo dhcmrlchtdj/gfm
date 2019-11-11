@@ -28,7 +28,6 @@ let cases =
       ("p1\n\np2", "<p>p1</p><br/><p>p2</p>");
     ]
 
-
 let build (input, output) =
     ( "test",
       `Quick,
@@ -38,6 +37,5 @@ let build (input, output) =
             input
             output
             (input |> Parser.parse |> Renderer.html_render) )
-
 
 let () = Alcotest.run "markdown" [ ("test_set", List.map build cases) ]

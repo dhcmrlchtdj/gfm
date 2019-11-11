@@ -12,13 +12,11 @@ let run callback =
     in
     aux argv
 
-
 let main input =
     input
     |> Parser.parse
     |> Renderer.html_render
     |> Renderer.with_style
     |> print_endline
-
 
 let () = run main
