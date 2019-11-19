@@ -4,7 +4,7 @@ run: build
 	./_build/default/bin/bin.exe
 
 build:
-	dune build @default
+	dune build @default --profile=dev
 
 test:
 	dune runtest
@@ -18,9 +18,14 @@ fmt:
 doc:
 	dune build @doc
 
+release:
+	dune build @default --profile=release
+
 install:
-	dune build @install
-	dune install
+	opam install .
+
+uninstall:
+	opam remove .
 
 .PHONY: run build test clean fmt doc
-.PHONY: install
+.PHONY: release install uninstall

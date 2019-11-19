@@ -8,5 +8,4 @@
 
 (alias
  (name default)
- (deps
-  (alias_rec all)))
+ (deps mine.cmxs))
