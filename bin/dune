@@ -4,7 +4,3 @@
  (libraries containers mine)
  (flags
   (:standard -warn-error -a)))
-
-(alias
- (name default)
- (deps bin.exe))

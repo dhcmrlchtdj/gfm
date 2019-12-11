@@ -5,7 +5,3 @@
   (pps ppx_deriving.std))
  (flags
   (:standard -warn-error -a)))
-
-(alias
- (name default)
- (deps mine.cmxs))

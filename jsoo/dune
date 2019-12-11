@@ -10,5 +10,5 @@
   (:standard -warn-error -a)))
 
 (alias
- (name default)
+ (name install)
  (deps jsoo.bc.js))

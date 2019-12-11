@@ -2,7 +2,7 @@
 
 (name mine)
 
-(version 1.0.2)
+(version 1.0.3)
 (authors "H11 <nirisix@gmail.com>")
 (maintainers "H11 <nirisix@gmail.com>")
 (source
@@ -13,15 +13,15 @@
  (name mine)
  (synopsis "A markdown renderer in OCaml")
  (depends
-  (containers           (and (= 2.7)))
-  (re                   (and (= 1.9.0)))
-  (ppx_deriving         (and :build (= 4.4)))
-  (dune                 (and :build (= 2.0.0)))
-  (js_of_ocaml          (and :dev (= 3.5.1)))
-  (js_of_ocaml-compiler (and :dev (= 3.5.1)))
-  (js_of_ocaml-ppx      (and :dev (= 3.5.1)))
-  (ocamlformat          (and :dev (= 0.12)))
-  (alcotest             (and :with-test (= 0.8.5)))
+  (containers           (and (>= 2.7)))
+  (re                   (and (>= 1.9.0)))
+  (ppx_deriving         (and :build (>= 4.4)))
+  (dune                 (and :build (>= 2.0.0)))
+  (js_of_ocaml          (and :dev (>= 3.5.1)))
+  (js_of_ocaml-compiler (and :dev (>= 3.5.1)))
+  (js_of_ocaml-ppx      (and :dev (>= 3.5.1)))
+  (ocamlformat          (and :dev (>= 0.12)))
+  (alcotest             (and :with-test (>= 0.8.5)))
   ))
 
 (generate_opam_files true)
