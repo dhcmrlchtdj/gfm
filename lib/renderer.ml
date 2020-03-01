@@ -1,18 +1,18 @@
 open! Containers
 open Types
 
-let encode (s : string) : string =
-  let f = function
-    | '<' -> "&lt;"
-    | '>' -> "&gt;"
-    | '&' -> "&amp;"
-    | '"' -> "&quot;"
-    | '\'' -> "&#x27;"
-    | c -> String.of_char c
-  in
-  s |> String.to_list |> List.map f |> String.concat ""
-
 let html_render (input : md_ast) : string =
+  let encode (s : string) : string =
+    let f = function
+      | '<' -> "&lt;"
+      | '>' -> "&gt;"
+      | '&' -> "&amp;"
+      | '"' -> "&quot;"
+      | '\'' -> "&#x27;"
+      | c -> String.of_char c
+    in
+    s |> String.to_list |> List.map f |> String.concat ""
+  in
   let sprintf = Printf.sprintf in
   let rec span_to_html : spanElement -> string = function
     | Slink (text, url) ->
@@ -54,7 +54,9 @@ let html_render (input : md_ast) : string =
   let md_to_html (md : md_ast) : string = blocks_to_html md in
   md_to_html input
 
-let with_style (body : string) : string =
+let default_style = [%blob "./style-gfm.css"]
+
+let with_style ?(style = default_style) (body : string) : string =
   let elements =
     [
       "<html>";
@@ -62,7 +64,7 @@ let with_style (body : string) : string =
       {|<meta charset="utf-8"/>|};
       {|<meta name="viewport" content="width=device-width,initial-scale=1"/>|};
       "<style>";
-      [%blob "./style-gfm.css"];
+      style;
       "</style>";
       "</head>";
       {|<body class="markdown-body">|};

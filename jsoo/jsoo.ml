@@ -9,10 +9,10 @@ let to_jsString = Js.string
 let () =
   let obj =
     object%js
-      method body s =
+      method render s =
         s |> of_jsString |> Parser.parse |> Renderer.html_render |> to_jsString
 
-      method html s =
+      method renderWithStyle s =
         s
         |> of_jsString
         |> Parser.parse
