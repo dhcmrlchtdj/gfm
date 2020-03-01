@@ -16,6 +16,7 @@
   (containers           (and (>= 2.8.1)))
   (re                   (and (>= 1.9.0)))
   (ppx_deriving         (and :build (>= 4.4.1)))
+  (ppx_blob             (and :build (>= 0.4.0)))
   (dune                 (and :build (>= 2.3.1)))
   (bisect_ppx           (and :build (>= 1.4.2)))
   (js_of_ocaml          (and :dev (>= 3.5.2)))
