@@ -2,6 +2,4 @@
  (name mine)
  (libraries containers re)
  (preprocess
-  (pps ppx_deriving.std))
- (flags
-  (:standard -warn-error -a)))
+  (pps bisect_ppx -conditional ppx_deriving.eq)))

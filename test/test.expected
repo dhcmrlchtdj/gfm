@@ -1,0 +1,18 @@
+<p><code>hi</code>lo`</p>
+<p><code>foo</code></p>
+<p><code>a  b</code></p>
+<p>*foo<code>*</code></p>
+<p>[not a <code>link](/foo</code>)</p>
+<p><code>&lt;a href=&quot;</code>&quot;&gt;`</p>
+<p><code>&lt;http://foo.bar.</code>baz&gt;`</p>
+<p><em>foo bar</em></p>
+<p>foo<em>bar</em></p>
+<p>_foo*</p>
+<p><del>foo</del></p>
+<p><strong>foo</strong></p>
+<p><em>foo</em></p>
+<p><a href='http://foo.bar.baz'>http://foo.bar.baz</a></p>
+<p><a href='MAILTO:FOO@BAR.BAZ'>MAILTO:FOO@BAR.BAZ</a></p>
+<p><a href='http://commonmark.org'>http://commonmark.org</a></p>
+<p>Visit <a href='https://encrypted.google.com/search?q=Markup+(business)'>https://encrypted.google.com/search?q=Markup+(business)</a></p>
+<p>p1</p><br/><p>p2</p>

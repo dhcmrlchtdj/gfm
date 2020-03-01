@@ -1,6 +1,4 @@
 (executable
  (public_name mine)
  (name bin)
- (libraries containers mine)
- (flags
-  (:standard -warn-error -a)))
+ (libraries containers mine))
