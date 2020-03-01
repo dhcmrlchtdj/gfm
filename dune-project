@@ -2,7 +2,7 @@
 
 (name mine)
 
-(version 1.0.3)
+(version 1.0.4)
 (authors "H11 <nirisix@gmail.com>")
 (maintainers "H11 <nirisix@gmail.com>")
 (source
