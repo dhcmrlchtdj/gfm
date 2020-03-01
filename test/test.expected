@@ -11,8 +11,8 @@
 <p><del>foo</del></p>
 <p><strong>foo</strong></p>
 <p><em>foo</em></p>
-<p><a href='http://foo.bar.baz'>http://foo.bar.baz</a></p>
-<p><a href='MAILTO:FOO@BAR.BAZ'>MAILTO:FOO@BAR.BAZ</a></p>
-<p><a href='http://commonmark.org'>http://commonmark.org</a></p>
-<p>Visit <a href='https://encrypted.google.com/search?q=Markup+(business)'>https://encrypted.google.com/search?q=Markup+(business)</a></p>
+<p><a rel="noopener" href="http://foo.bar.baz">http://foo.bar.baz</a></p>
+<p><a rel="noopener" href="MAILTO:FOO@BAR.BAZ">MAILTO:FOO@BAR.BAZ</a></p>
+<p><a rel="noopener" href="http://commonmark.org">http://commonmark.org</a></p>
+<p>Visit <a rel="noopener" href="https://encrypted.google.com/search?q=Markup+(business)">https://encrypted.google.com/search?q=Markup+(business)</a></p>
 <p>p1</p><br/><p>p2</p>

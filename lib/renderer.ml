@@ -16,9 +16,12 @@ let html_render (input : md_ast) : string =
   let sprintf = Printf.sprintf in
   let rec span_to_html : spanElement -> string = function
     | Slink (text, url) ->
-      sprintf "<a href='%s'>%s</a>" (encode url) (spans_to_html text)
+      sprintf
+        {|<a rel="noopener" href="%s">%s</a>|}
+        (encode url)
+        (spans_to_html text)
     | Simage (alt, url) ->
-      sprintf "<img src='%s' alt='%s'/>" (encode url) (encode alt)
+      sprintf {|<img src="%s" alt="%s"/>|} (encode url) (encode alt)
     | Sstrong t -> sprintf "<strong>%s</strong>" (spans_to_html t)
     | Semphasis t -> sprintf "<em>%s</em>" (spans_to_html t)
     | Sdelete t -> sprintf "<del>%s</del>" (spans_to_html t)
@@ -34,7 +37,7 @@ let html_render (input : md_ast) : string =
     | Bparagraph p -> sprintf "<p>%s</p>" (spans_to_html p)
     | Bcode (Some l, c) ->
       sprintf
-        "<pre><code class='language-%s'>%s</code></pre>"
+        {|<pre><code class="language-%s">%s</code></pre>|}
         (encode l)
         (encode c)
     | Bcode (None, c) -> sprintf "<pre><code>%s</code></pre>" (encode c)
@@ -59,13 +62,13 @@ let with_style (body : string) : string =
     [
       "<html>";
       "<head>";
-      "<meta charset='utf-8'/>";
-      "<meta name='viewport' content='width=device-width,initial-scale=1'/>";
+      {|<meta charset="utf-8"/>|};
+      {|<meta name="viewport" content="width=device-width,initial-scale=1"/>|};
       "<style>";
       gfm_style;
       "</style>";
       "</head>";
-      "<body class='markdown-body'>";
+      {|<body class="markdown-body">|};
       body;
       "</body>";
       "</html>";
