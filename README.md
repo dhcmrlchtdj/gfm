@@ -1,5 +1,8 @@
 # mine
 
+![ci](https://github.com/dhcmrlchtdj/mine/workflows/ci/badge.svg)
+[![codecov](https://codecov.io/gh/dhcmrlchtdj/mine/branch/master/graph/badge.svg)](https://codecov.io/gh/dhcmrlchtdj/mine)
+
 A markdown renderer in OCaml.
 
 ---
