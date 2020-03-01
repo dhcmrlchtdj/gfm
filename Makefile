@@ -30,7 +30,6 @@ doc:
 	opam exec dune -- build @doc
 
 dep:
-	opam depext -y conf-pkg-config
 	opam install . --deps-only
 
 install: release
