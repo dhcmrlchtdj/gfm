@@ -17,7 +17,12 @@ let expand_tab (input : string) : string =
       )
       else (p + 1, curr :: acc)
     in
-    input |> String.to_list |> List.fold_left f (0, []) |> snd |> String.of_list
+    input
+    |> String.to_list
+    |> List.fold_left f (0, [])
+    |> snd
+    |> List.rev
+    |> String.of_list
   )
   else input
 

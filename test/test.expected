@@ -16,3 +16,23 @@
 <p><a rel="noopener" href="http://commonmark.org">http://commonmark.org</a></p>
 <p>Visit <a rel="noopener" href="https://encrypted.google.com/search?q=Markup+(business)">https://encrypted.google.com/search?q=Markup+(business)</a></p>
 <p>p1</p><br/><p>p2</p>
+<p>p1</p><hr/><p>p2</p>
+<h1>This is an <a rel="noopener" href="h1">h1</a> tag</h1>
+<h6>This is an <a rel="noopener" href="h6">h6</a> tag</h6>
+<p><em>This text will be italic</em></p>
+<p><em>This will also be italic</em></p>
+<p><strong>This text will be bold</strong></p>
+<p><strong>This will also be bold</strong></p>
+<p><em>You <strong>can</strong> combine them</em></p>
+<ul><li>Item 1</li><li>Item 2<ul><li>Item 2a</li><li>Item 2b</li></ul></li></ul>
+<p><img src="/images/logo.png" alt="GitHub Logo"/></p>
+<p>Format: <img src="url" alt="Alt Text"/></p>
+<p><a rel="noopener" href="http://github.com">http://github.com</a> - automatic!</p>
+<p><a rel="noopener" href="http://github.com">GitHub</a></p>
+<p>As Kanye West said:</p><br/><blockquote><p>We&#x27;re living the future so</p><p>the present is our past.</p></blockquote>
+<p>I think you should use an</p><p><code>&lt;addr&gt;</code> element here instead.</p>
+<pre><code class="language-javascript">function fancyAlert(arg) {
+  if(arg) {
+    $.facebox({div:&#x27;#foo&#x27;})
+  }
+}</code></pre>
