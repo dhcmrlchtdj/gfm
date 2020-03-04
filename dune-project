@@ -2,7 +2,7 @@
 
 (name mine)
 
-(version 1.0.4)
+(version 1.0.5)
 (authors "H11 <nirisix@gmail.com>")
 (maintainers "H11 <nirisix@gmail.com>")
 (source
@@ -19,9 +19,9 @@
   (ppx_blob             (and :build (>= 0.4.0)))
   (dune                 (and :build (>= 2.3.1)))
   (bisect_ppx           (and :build (>= 1.4.2)))
-  (js_of_ocaml          (and :build (>= 3.5.2)))
-  (js_of_ocaml-compiler (and :build (>= 3.5.2)))
-  (js_of_ocaml-ppx      (and :build (>= 3.5.2)))
-  ))
+  (js_of_ocaml          (and :dev (>= 3.5.2)))
+  (js_of_ocaml-compiler (and :dev (>= 3.5.2)))
+  (js_of_ocaml-ppx      (and :dev (>= 3.5.2)))
+ ))
 
 (generate_opam_files true)

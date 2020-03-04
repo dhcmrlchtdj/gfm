@@ -30,7 +30,7 @@ doc:
 	opam exec dune -- build @doc
 
 dep:
-	opam install . --deps-only
+	opam install . --deps-only --with-test
 
 install: release
 	opam install .
