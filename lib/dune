@@ -3,4 +3,6 @@
  (libraries containers re)
  (preprocessor_deps ./style-gfm.css)
  (preprocess
-  (pps bisect_ppx -conditional ppx_deriving.eq ppx_blob)))
+  (pps ppx_deriving.eq ppx_blob))
+ (instrumentation
+  (backend bisect_ppx)))

@@ -1,5 +1,7 @@
 SHELL := bash
 
+.PHONY: build release test test_update coverage clean fmt doc dep install uninstall
+
 build:
 	opam exec dune -- build @install --profile=dev
 
@@ -14,14 +16,14 @@ test_update:
 
 coverage:
 	opam exec dune -- clean
-	OCAMLRUNPARAM=b BISECT_ENABLE=yes opam exec dune -- runtest
-	opam exec bisect-ppx-report -- -html=_coverage \
-		-coveralls=_coverage/coverage.json \
-		-I=_build/default/ \
-		_build/default/**/bisect*.out
+	OCAMLRUNPARAM=b opam exec dune -- runtest --instrument-with bisect_ppx
+	opam exec bisect-ppx-report -- coveralls _coverage/coverage.json
+	opam exec bisect-ppx-report -- html
+	opam exec bisect-ppx-report -- summary
 
 clean:
 	opam exec dune -- clean
+	rm -rf ./_coverage
 
 fmt:
 	-opam exec dune -- build @fmt --auto-promote
@@ -37,5 +39,3 @@ install: release
 
 uninstall: release
 	opam remove .
-
-.PHONY: build test clean fmt doc release install uninstall test_update coverage dep

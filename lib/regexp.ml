@@ -20,7 +20,8 @@ let token_to_str : Re.split_token list -> split_text list =
         let s = Re.Group.get d 0 in
         SplitDelim s
       with Not_found -> SplitText ""
-    ))
+    )
+    )
 
 let split_full (re : Re.re) (str : string) : split_text list =
   Re.split_full re str |> token_to_str

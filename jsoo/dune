@@ -1,11 +1,14 @@
 (executable
  (name jsoo)
  (modes js)
+ ; (promote
+ ;  (until-clean)
+ ;  (only *.bc.js))
  (js_of_ocaml
-  (flags --opt=3 --no-source-map))
+  (flags --no-source-map))
  (libraries js_of_ocaml containers mine)
  (preprocess
-  (pps js_of_ocaml.ppx)))
+  (pps js_of_ocaml-ppx)))
 
 ; (alias
 ;  (name install)
